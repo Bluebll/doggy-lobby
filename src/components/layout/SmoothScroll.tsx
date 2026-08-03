@@ -10,22 +10,23 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
     gsap.registerPlugin(ScrollTrigger)
 
     const lenis = new Lenis({
-      lerp: 0.1,
-      duration: 1.2,
+      lerp: 0.18,
+      duration: 0.5,
       smoothWheel: true,
     })
 
     lenis.on("scroll", ScrollTrigger.update)
 
-    gsap.ticker.add((time) => {
+    const update = (time: number) => {
       lenis.raf(time * 1000)
-    })
+    }
 
+    gsap.ticker.add(update)
     gsap.ticker.lagSmoothing(0)
 
     return () => {
+      gsap.ticker.remove(update)
       lenis.destroy()
-      gsap.ticker.remove(lenis.raf)
     }
   }, [])
 
