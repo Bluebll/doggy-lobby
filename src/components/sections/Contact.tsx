@@ -86,8 +86,13 @@ export default function Contact() {
                 <MapPin className="text-[var(--color-brand-orange)]" size={24} />
               </div>
               <div>
-                <h4 className="font-bold text-xl text-white mb-1">Sector 15 Market</h4>
-                <p className="text-white/60 leading-relaxed">Next to Mother Dairy<br />Faridabad, HR 121007</p>
+               <h4 className="font-bold text-xl text-white mb-1">Doggy Lobby</h4>
+<p className="text-white/60 leading-relaxed">
+  2467, Street No. 12<br />
+  Greenfields Main Road<br />
+  Near All 4 Pet Dog Shop<br />
+  Sector 43, Faridabad, Haryana 121001
+</p>
               </div>
             </div>
             

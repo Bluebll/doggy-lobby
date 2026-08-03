@@ -28,7 +28,7 @@ export default function Navbar() {
   return (
     <header
       className={`fixed top-0 w-full z-[150] transition-all duration-700 ${
-        isScrolled ? "py-4 bg-white/70 backdrop-blur-xl border-b border-white/50 shadow-[0_4px_30px_rgba(0,0,0,0.03)]" : "py-8 bg-transparent"
+        isScrolled ? "py-4 bg-white/70 backdrop-blur-xl border-b border-white/50 shadow-[0_4px_30px_rgba(0,0,0,0.03)]" : "py-4 bg-transparent"
       }`}
     >
       <div className="container mx-auto px-6 md:px-12 flex justify-between items-center">

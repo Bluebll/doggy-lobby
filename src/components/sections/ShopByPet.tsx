@@ -99,23 +99,17 @@ function PetCard({ pet, index, onEnter, onLeave }: { pet: typeof pets[0], index:
       <div className="absolute inset-0 bg-[#111] z-0">
         <AnimatePresence initial={false}>
           {isHovered ? (
-            <motion.img 
+            <img 
               key="hover-image"
-              initial={{ opacity: 0, scale: 1.1 }}
-              animate={{ opacity: 0.8, scale: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
+
               src={pet.hoverImage}
               alt={`${pet.title} hovering`}
               className="absolute inset-0 w-full h-full object-cover mix-blend-lighten"
             />
           ) : (
-            <motion.img 
+            <img 
               key="base-image"
-              initial={{ opacity: 0, scale: 1.1 }}
-              animate={{ opacity: 0.6, scale: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
+
               src={pet.image}
               alt={pet.title}
               className="absolute inset-0 w-full h-full object-cover mix-blend-lighten"

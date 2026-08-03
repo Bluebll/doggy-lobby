@@ -2,7 +2,7 @@
 
 export default function Gallery() {
   return (
-    <section className="py-32 bg-white">
+    <section id="gallery" className="py-32 bg-white scroll-mt-24">
       <div className="container mx-auto px-6 text-center mb-20">
         <h2 className="text-orange-500 font-bold text-sm mb-4">GALLERY</h2>
         <h3 className="text-5xl font-bold text-black">Happy Pets, Happy People</h3>

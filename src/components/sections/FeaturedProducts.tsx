@@ -59,7 +59,7 @@ function ProductCard({ product }: { product: typeof products[0] }) {
   
   return (
     <motion.div 
-      className="w-[300px] md:w-[400px] h-[550px] md:h-[600px] flex flex-col group cursor-pointer bg-white rounded-[var(--radius-3xl)] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-black/5"
+className="w-[300px] md:w-[400px] h-[550px] md:h-[600px] flex flex-col group cursor-pointer bg-white rounded-[var(--radius-3xl)] overflow-hidden shadow-md hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-black/5"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -71,12 +71,11 @@ function ProductCard({ product }: { product: typeof products[0] }) {
           </div>
         )}
         
-        <motion.img 
+        <img 
           src={product.image} 
           alt={product.name}
           className="absolute inset-0 w-full h-full object-cover z-10"
-          animate={{ scale: isHovered ? 1.05 : 1 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
+
         />
       </div>
       
@@ -95,11 +94,11 @@ function ProductCard({ product }: { product: typeof products[0] }) {
           {product.desc}
         </p>
         
-        <div className="flex items-center justify-between mt-6 pt-6 border-t border-gray-100">
-          <p className="font-heading font-extrabold text-2xl text-black">{product.price}</p>
+        <div className="flex items-center justify-end mt-6 pt-6 border-t border-gray-100">
+
           
           <button 
-            className="w-12 h-12 rounded-full bg-black text-white flex items-center justify-center group-hover:bg-[var(--color-brand-orange)] transition-colors duration-300"
+            className="w-12 h-12 rounded-full bg-black text-white flex items-center justify-center group-hover:bg-[var(--color-brand-orange)] transition-all duration-300 group-hover:scale-110"
             aria-label={`Add ${product.name} to cart`}
           >
             <ShoppingBag size={18} />
@@ -142,10 +141,10 @@ export default function FeaturedProducts() {
         </div>
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <h3 className="font-heading text-4xl md:text-5xl lg:text-6xl font-extrabold text-black max-w-2xl leading-tight md:leading-[1.1]">
-            The finest goods for the finest companions.
+            Luxury essentials for pets who deserve the very best.
           </h3>
           <p className="text-gray-500 font-medium hidden md:block max-w-xs text-right">
-            Drag to explore our curated selection of global pet luxury.
+            Discover premium products handpicked for your beloved companions.
           </p>
         </div>
       </div>

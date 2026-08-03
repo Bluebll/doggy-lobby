@@ -20,20 +20,18 @@ export default function Hero() {
     setCursorText("")
   }
 
-  const headline = "Faridabad's Premium Destination For Happy Pets"
+ const headline = "Everything Your Pet Needs Under One Roof"
   const words = headline.split(" ")
 
   return (
-    <section ref={containerRef} className="relative h-screen min-h-[800px] flex items-center justify-center overflow-hidden bg-black">
+<section ref={containerRef} className="relative h-screen flex items-center overflow-hidden bg-black">
       {/* Background Lighting */}
       <div className="absolute top-1/4 left-1/4 w-[40vw] h-[40vw] bg-[var(--color-brand-orange)]/10 rounded-full blur-[100px] mix-blend-screen pointer-events-none will-change-transform"></div>
       
       {/* Background Image - static, brightened slightly */}
       <div className="absolute inset-0 z-0">
-        <motion.img
-          initial={{ scale: 1.1, filter: "blur(10px)" }}
-          animate={{ scale: 1, filter: "blur(0px)" }}
-          transition={{ duration: 1.5, ease: "easeOut" }}
+        <img
+
           src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?q=80&w=2669&auto=format&fit=crop"
           alt="Happy dogs"
           className="w-full h-[120%] object-cover object-center absolute top-[-10%] opacity-80"
@@ -56,14 +54,14 @@ export default function Hero() {
           ))}
         </div>
         <div className="flex flex-col pr-2">
-          <span className="text-white font-bold text-base leading-tight">4.9 Google Rating</span>
+          <span className="text-white font-bold text-base leading-tight">Trusted Pet Store</span>
           <span className="text-white/60 text-xs font-medium uppercase tracking-wider mt-1">Trusted locally</span>
         </div>
       </motion.div>
 
-      <div className="container mx-auto px-6 md:px-12 relative z-10 flex flex-col items-center md:items-start text-center md:text-left pt-32 md:pt-24 mt-10">
+<div className="container mx-auto px-6 md:px-12 relative z-10 flex flex-col items-center md:items-start text-center md:text-left pt-24 md:pt-24">
         
-        <h1 className="font-heading text-5xl sm:text-6xl md:text-7xl lg:text-[6.5rem] font-extrabold text-white leading-[1.1] md:leading-[1.05] mb-6 max-w-5xl flex flex-wrap justify-center md:justify-start">
+       <h1 className="font-heading text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] font-extrabold text-white leading-[1.1] md:leading-[1.05] mb-6 max-w-5xl flex flex-wrap justify-center md:justify-start">
           {words.map((word, i) => (
             <motion.span
               key={i}
@@ -115,7 +113,7 @@ export default function Hero() {
           className="flex flex-wrap justify-center md:justify-start gap-4 sm:gap-6 md:gap-10 text-white text-sm font-semibold tracking-wider uppercase bg-white/10 p-4 rounded-2xl backdrop-blur-md border border-white/20"
         >
           <div className="flex items-center gap-2">
-            <Star size={16} className="text-[var(--color-brand-orange)]" /> 4.9 Google Rating
+            <Star size={16} className="text-[var(--color-brand-orange)]" /> Trusted Pet Store
           </div>
           <div className="flex items-center gap-2">
             <Award size={16} className="text-[var(--color-brand-orange)]" /> Imported Brands
