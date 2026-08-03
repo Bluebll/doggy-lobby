@@ -30,7 +30,7 @@ const products = [
     brand: "WildCatch",
     desc: "Rich in Omega-3s for a glowing, healthy coat.",
     price: "₹2,199", 
-    image: "https://images.unsplash.com/photo-1584362917165-526a968579e8?q=80&w=800&auto=format&fit=crop", 
+    image: "https://images.unsplash.com/photo-1768326119213-e0ad875083a3?q=80&w=800&auto=format&fit=crop", 
     tag: "", 
     category: "Food" 
   },
@@ -39,7 +39,7 @@ const products = [
     brand: "ToughBite",
     desc: "Medical-grade rubber that withstands the toughest jaws.",
     price: "₹899", 
-    image: "https://images.unsplash.com/photo-1576201836106-db1758fd1c97?q=80&w=800&auto=format&fit=crop", 
+    image: "https://images.pexels.com/photos/7789449/pexels-photo-7789449.jpeg?auto=compress&cs=tinysrgb&w=800", 
     tag: "", 
     category: "Toys" 
   },
@@ -48,7 +48,7 @@ const products = [
     brand: "ZenPet",
     desc: "Promotes healthy digestion and prevents bloating.",
     price: "₹1,499", 
-    image: "https://images.unsplash.com/photo-1623387641177-e8a49c0b471c?q=80&w=800&auto=format&fit=crop", 
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Green_Spiral_Slow_Feeder_Dog_Bowl.jpg/960px-Green_Spiral_Slow_Feeder_Dog_Bowl.jpg", 
     tag: "Trending", 
     category: "Accessories" 
   },

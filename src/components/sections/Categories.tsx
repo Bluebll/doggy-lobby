@@ -4,10 +4,10 @@ import { useState } from "react"
 import { motion } from "framer-motion"
 
 const categories = [
-  { name: "Dog Food", image: "https://images.unsplash.com/photo-1587300411515-2f66f43a3117?w=500&h=600&fit=crop", color: "from-blue-500/60" },
-  { name: "Cat Food", image: "https://images.unsplash.com/photo-1595433707802-6b2626ef1c91?w=500&h=600&fit=crop", color: "from-green-500/60" },
-  { name: "Toys", image: "https://images.unsplash.com/photo-1633722715463-d30628519ca0?w=500&h=600&fit=crop", color: "from-amber-500/60" },
-  { name: "Treats", image: "https://images.unsplash.com/photo-1618826411640-d6df44dd3f7a?w=500&h=600&fit=crop", color: "from-red-500/60" },
+  { name: "Dog Food", image: "https://images.pexels.com/photos/8473516/pexels-photo-8473516.jpeg?auto=compress&cs=tinysrgb&w=800", color: "from-blue-500/60" },
+  { name: "Cat Food", image: "https://images.unsplash.com/photo-1580238169544-86bf7cd8c84c?q=80&w=800&auto=format&fit=crop", color: "from-green-500/60" },
+  { name: "Toys", image: "https://images.unsplash.com/photo-1591946614720-90a587da4a36?q=80&w=800&auto=format&fit=crop", color: "from-amber-500/60" },
+  { name: "Treats", image: "https://images.unsplash.com/photo-1568640347023-a616a30bc3bd?q=80&w=800&auto=format&fit=crop", color: "from-red-500/60" },
 ]
 
 function CategoryCard({ category }: { category: typeof categories[0] }) {
