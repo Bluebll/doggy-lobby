@@ -7,6 +7,7 @@ import Footer from "@/components/layout/Footer";
 import MobileBottomNav from "@/components/layout/MobileBottomNav";
 import { CustomCursor, AmbientBackground, NoiseOverlay } from "@/components/ui/GlobalEffects";
 import { CursorProvider } from "@/components/ui/CursorProvider";
+import CartDrawer from "@/components/cart/CartDrawer";
 
 const manrope = Manrope({
   variable: "--font-manrope",
@@ -116,6 +117,7 @@ export default function RootLayout({
             <Footer />
             <MobileBottomNav />
           </SmoothScroll>
+          <CartDrawer />
         </CursorProvider>
       </body>
     </html>

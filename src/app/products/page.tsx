@@ -1,7 +1,7 @@
 import Link from "next/link"
-import { ShoppingBag } from "lucide-react"
 import { getProducts } from "@/lib/queries/products"
 import { formatPrice } from "@/lib/constants"
+import AddToCartButton from "@/components/cart/AddToCartButton"
 import type { Product } from "@/types/domain"
 
 export const revalidate = 60
@@ -51,9 +51,7 @@ function Card({ product }: { product: Product }) {
         )}
         <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100">
           <span className="font-heading font-extrabold text-lg text-black">{formatPrice(product.price)}</span>
-          <div className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center group-hover:bg-[var(--color-brand-orange)] transition-all">
-            <ShoppingBag size={16} />
-          </div>
+          <AddToCartButton product={product} size="sm" variant="icon" />
         </div>
       </div>
     </Link>

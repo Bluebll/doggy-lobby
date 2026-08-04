@@ -1,9 +1,10 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { ShoppingBag, Package, Truck, Shield } from "lucide-react"
+import { Package, Truck, Shield } from "lucide-react"
 import { getProductBySlug, getRelatedProducts } from "@/lib/queries/products"
 import { getSupabaseServer } from "@/lib/supabase/server"
 import { formatPrice } from "@/lib/constants"
+import AddToCartButton from "@/components/cart/AddToCartButton"
 import type { Category, Product } from "@/types/domain"
 
 export const revalidate = 60
@@ -163,15 +164,8 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
               <p className="text-gray-600 leading-relaxed mb-8 whitespace-pre-line">{product.description}</p>
             )}
 
-            <button
-              disabled
-              className="w-full md:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full bg-black text-white font-semibold text-base hover:bg-[var(--color-brand-orange)] transition-colors disabled:opacity-60"
-              title="Cart coming in Phase 2"
-            >
-              <ShoppingBag size={18} />
-              Add to cart
-            </button>
-            <p className="text-xs text-gray-400 mt-3">Cart & WhatsApp ordering enabled in upcoming release.</p>
+            <AddToCartButton product={product} />
+            <p className="text-xs text-gray-400 mt-3">Tapping <b>Add to cart</b> opens your cart drawer. Checkout is sent via WhatsApp.</p>
 
             {/* Trust bar */}
             <div className="grid grid-cols-3 gap-4 mt-10 pt-8 border-t border-gray-100">

@@ -1,9 +1,9 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { ShoppingBag } from "lucide-react"
 import { getCategoryBySlug, getCategories } from "@/lib/queries/categories"
 import { getProductsByCategoryId } from "@/lib/queries/products"
 import { formatPrice } from "@/lib/constants"
+import AddToCartButton from "@/components/cart/AddToCartButton"
 import type { Product } from "@/types/domain"
 
 export const revalidate = 60
@@ -64,9 +64,7 @@ function ProductGridCard({ product }: { product: Product }) {
               <span className="text-gray-400 text-xs line-through">{formatPrice(product.compare_at_price)}</span>
             )}
           </div>
-          <div className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center group-hover:bg-[var(--color-brand-orange)] transition-all">
-            <ShoppingBag size={16} />
-          </div>
+          <AddToCartButton product={product} size="sm" variant="icon" />
         </div>
       </div>
     </Link>

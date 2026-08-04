@@ -3,11 +3,16 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
-import { Phone, MessageCircle, Navigation, MapPin } from "lucide-react"
+import { Phone, MessageCircle, Navigation, MapPin, ShoppingBag } from "lucide-react"
+import { useCart } from "@/stores/cart-store"
 
 export default function MobileBottomNav() {
   const [isVisible, setIsVisible] = useState(true)
   const [lastScrollY, setLastScrollY] = useState(0)
+  const openCart = useCart((s) => s.openCart)
+  const cartItems = useCart((s) => s.items)
+  const hasHydrated = useCart((s) => s.hasHydrated)
+  const cartCount = hasHydrated ? cartItems.reduce((n, i) => n + i.qty, 0) : 0
 
   useEffect(() => {
     const handleScroll = () => {
@@ -62,10 +67,13 @@ export default function MobileBottomNav() {
               <span className="text-[10px] font-bold uppercase tracking-wider">Route</span>
             </Link>
 
-            <Link href="#categories" aria-label="Shop Categories" className="flex flex-col items-center gap-1 text-black/60 hover:text-black transition-colors">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-              <span className="text-[10px] font-bold uppercase tracking-wider">Shop</span>
-            </Link>
+            <button onClick={openCart} aria-label={`Open cart (${cartCount} items)`} className="flex flex-col items-center gap-1 text-black/60 hover:text-black transition-colors relative">
+              <ShoppingBag size={20} aria-hidden="true" />
+              <span className="text-[10px] font-bold uppercase tracking-wider">Cart</span>
+              {cartCount > 0 && (
+                <span className="absolute -top-1 right-1 min-w-[16px] h-[16px] px-1 rounded-full bg-[var(--color-brand-orange)] text-white text-[9px] font-bold flex items-center justify-center">{cartCount}</span>
+              )}
+            </button>
           </div>
         </motion.div>
       )}

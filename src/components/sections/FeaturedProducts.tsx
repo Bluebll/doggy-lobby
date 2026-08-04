@@ -5,9 +5,9 @@ import Link from "next/link"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { motion } from "framer-motion"
-import { ShoppingBag } from "lucide-react"
 import type { Product } from "@/types/domain"
 import { formatPrice } from "@/lib/constants"
+import AddToCartButton from "@/components/cart/AddToCartButton"
 
 const FALLBACK_IMAGE =
   "https://images.unsplash.com/photo-1601758260908-9dd6c47ffbfe?q=80&w=800&auto=format&fit=crop"
@@ -78,12 +78,7 @@ function ProductCard({ product }: { product: Product }) {
               )}
             </div>
 
-            <button
-              className="w-12 h-12 rounded-full bg-black text-white flex items-center justify-center group-hover:bg-[var(--color-brand-orange)] transition-all duration-300 group-hover:scale-110"
-              aria-label={`View ${product.name}`}
-            >
-              <ShoppingBag size={18} />
-            </button>
+            <AddToCartButton product={product} size="md" variant="icon" />
           </div>
         </div>
       </motion.div>
