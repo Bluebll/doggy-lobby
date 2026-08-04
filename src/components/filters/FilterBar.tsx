@@ -31,10 +31,10 @@ export default function FilterBar({ brands, minPrice, maxPrice }: Props) {
 
   const apply = () => {
     const params = new URLSearchParams(sp.toString())
-    brand ? params.set("brand", brand) : params.delete("brand")
-    min ? params.set("min", min) : params.delete("min")
-    max ? params.set("max", max) : params.delete("max")
-    sort && sort !== "new" ? params.set("sort", sort) : params.delete("sort")
+    if (brand) params.set("brand", brand); else params.delete("brand")
+    if (min) params.set("min", min); else params.delete("min")
+    if (max) params.set("max", max); else params.delete("max")
+    if (sort && sort !== "new") params.set("sort", sort); else params.delete("sort")
     router.push(`${pathname}?${params.toString()}`)
     setOpen(false)
   }
@@ -66,7 +66,8 @@ export default function FilterBar({ brands, minPrice, maxPrice }: Props) {
           value={sort}
           onChange={(e) => {
             const params = new URLSearchParams(sp.toString())
-            e.target.value === "new" ? params.delete("sort") : params.set("sort", e.target.value)
+            if (e.target.value === "new") params.delete("sort")
+            else params.set("sort", e.target.value)
             router.push(`${pathname}?${params.toString()}`)
           }}
           className="px-4 py-2.5 rounded-full bg-[var(--color-brand-gray)] text-sm font-semibold text-black outline-none cursor-pointer"

@@ -249,3 +249,75 @@ agent_communication:
       message: "Phase 3 admin backend testing. All /api/admin/* endpoints must return 401 when no admin session cookie is present. The workspace .env still has empty Supabase placeholders — so with no session at all, isAdminRequest() returns false and routes should return 401. Please verify: 1) All admin endpoints return 401 (Unauthorized) without cookies. 2) /api/admin/upload rejects non-multipart or missing file with 400 (only if it can even reach validation — 401 should short-circuit first). 3) PATCH /api/admin/orders/[id] validates status enum (pending/confirmed/delivered/cancelled). Focus on verifying the guard fires before any DB call."
     - agent: "testing"
       message: "✅ Phase 3 admin backend testing complete - All 20 tests passed (20/20). Verified all 11 admin endpoints properly enforce authentication: GET/POST /api/admin/products, PATCH/DELETE /api/admin/products/[id], GET/POST /api/admin/categories, PATCH/DELETE /api/admin/categories/[id], GET /api/admin/orders, PATCH /api/admin/orders/[id], POST /api/admin/upload. All endpoints return 401 Unauthorized with {'error':'Unauthorized'} and application/json Content-Type when no auth cookies present. Auth guard (isAdminRequest) executes BEFORE body parsing and validation - tested with both valid and invalid request bodies. Customer-facing endpoints (GET /api/search, GET /api/products, POST /api/orders) continue to work correctly. No issues found."
+
+# ---- Final QA (Production smoke test) ----
+frontend:
+  - task: "Customer flow: homepage → PDP → cart drawer → checkout form"
+    implemented: true
+    working: false
+    file: "src/app/page.tsx,src/app/products/[slug]/page.tsx,src/components/cart/CartDrawer.tsx"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Full customer journey. Note: workspace .env has empty Supabase keys → products/categories will render as empty grids. Verify page structure, navigation, search modal opens, cart drawer opens/closes, wishlist button toggles, filter modal opens, no console errors, no hydration warnings, mobile responsiveness."
+        - working: false
+          agent: "testing"
+          comment: "🚨 CRITICAL: All client-side interactivity is broken. Search modal, cart drawer, and filter modal do not open when clicked. Root cause: Next.js JavaScript chunks returning 404 (main-app.js, app-pages-internals.js, error.js, not-found.js, page.js). The site renders server-side HTML correctly but has zero client-side JavaScript functionality. This is a deployment/build issue - the .next/static/chunks directory is not being served. POSITIVE: Homepage renders all sections except Contact, navigation works, wishlist navigation works, mobile responsive (no horizontal scroll at 375px), no hydration warnings."
+  - task: "Admin flow: /admin/login (unauthenticated) redirects/renders"
+    implemented: true
+    working: true
+    file: "src/app/admin/login/page.tsx,src/app/admin/(dashboard)/layout.tsx,middleware.ts"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Unauthenticated /admin should redirect to /admin/login. /admin/login should render a login form. Sub-routes /admin/products, /admin/categories, /admin/orders should also redirect."
+        - working: true
+          agent: "testing"
+          comment: "✅ All admin redirects working correctly. /admin redirects to /admin/login, /admin/products redirects to /admin/login, /admin/categories redirects to /admin/login, /admin/orders redirects to /admin/login. Login page renders with 'Welcome back.' heading, Doggy Lobby branding, Email and Password fields, and Sign in button. Login form submission with fake credentials does not show error message (auth may be configured differently or requires real Supabase connection)."
+  - task: "SEO endpoints render at their public URLs"
+    implemented: true
+    working: true
+    file: "src/app/sitemap.ts,src/app/robots.ts,src/app/layout.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "GET /sitemap.xml should return XML (may only have static routes if Supabase env empty). GET /robots.txt should return text with sitemap URL. HTML head should contain <script type='application/ld+json'> blocks for LocalBusiness + Organization, canonical <link>, and OG meta tags."
+        - working: true
+          agent: "testing"
+          comment: "✅ SEO endpoints working correctly. /sitemap.xml returns 200 with valid XML containing /, /products, /categories, /wishlist. /robots.txt returns 200 with 'User-agent: *', 'Disallow: /admin', 'Disallow: /api', 'Sitemap:'. Homepage HTML contains canonical link, Open Graph meta tags, Twitter card meta, and 2 JSON-LD schema blocks. Minor: First schema uses '@type: PetStore' instead of 'LocalBusiness' (PetStore is a valid schema.org type that extends LocalBusiness, so technically correct). Second schema correctly uses '@type: Organization'. 404 page renders correctly with 'Page not found' message and 'Back home' button."
+  - task: "Broken image / broken link audit"
+    implemented: true
+    working: false
+    file: "*"
+    stuck_count: 1
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+        - working: false
+          agent: "testing"
+          comment: "❌ CRITICAL: Next.js JavaScript chunks are returning 404 errors. Missing files: /_next/static/chunks/main-app.js, /_next/static/chunks/app-pages-internals.js, /_next/static/chunks/app/error.js, /_next/static/chunks/app/not-found.js, /_next/static/chunks/app/page.js. This is a deployment/build issue - the .next/static/chunks directory is not being served correctly. Additionally, Google Maps embed returns 400 error (expected, not critical). These missing JavaScript chunks cause all client-side interactivity to fail."
+
+test_plan:
+  current_focus:
+    - "Customer flow: homepage → PDP → cart drawer → checkout form"
+    - "Broken image / broken link audit"
+  stuck_tasks:
+    - "Customer flow: homepage → PDP → cart drawer → checkout form"
+    - "Broken image / broken link audit"
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+    - agent: "main"
+      message: "Final production smoke test. Workspace .env has EMPTY Supabase keys — catalog will be empty, /api/orders will fail with 500 (expected). Focus on: (1) UI renders without errors, no hydration warnings, no console errors, (2) all interactive components (cart drawer, search modal, wishlist heart, filter modal, admin login form) open/close and toggle correctly, (3) mobile responsiveness at 375px width, (4) admin routes redirect to login when unauthenticated, (5) SEO endpoints /sitemap.xml and /robots.txt return valid content, (6) HTML head contains canonical, OG, JSON-LD (LocalBusiness + Organization), (7) 404 page renders on unknown route (/nonexistent). Base URL: https://petstore-migration.preview.emergentagent.com"
+    - agent: "testing"
+      message: "🚨 CRITICAL PRODUCTION ISSUE: Next.js build is broken - all client-side JavaScript chunks are returning 404 errors (main-app.js, app-pages-internals.js, error.js, not-found.js, page.js). This causes ALL interactive components to fail: search modal, cart drawer, and filter modal do not open when clicked. The site renders server-side HTML correctly but has ZERO client-side interactivity. Additional issues: (1) Contact section missing from homepage, (2) LocalBusiness schema uses 'PetStore' type instead of 'LocalBusiness' (technically valid but unexpected). POSITIVE: Admin redirects work correctly, SEO endpoints (sitemap.xml, robots.txt) work, no hydration warnings, mobile responsive, all static content renders. ROOT CAUSE: Missing Next.js static chunks suggest deployment/build issue - the .next/static/chunks directory is not being served correctly."

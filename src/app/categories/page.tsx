@@ -1,6 +1,5 @@
 import Link from "next/link"
 import { getCategories } from "@/lib/queries/categories"
-import { site } from "@/config/site"
 
 export const revalidate = 60
 

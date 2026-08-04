@@ -65,9 +65,7 @@ export const useCart = create<CartState>()(
     {
       name: "doggy-lobby-cart",
       partialize: (s) => ({ items: s.items }),
-      onRehydrateStorage: () => (state) => {
-        state?.hasHydrated && state
-        // mark hydrated so UI can safely read count without SSR mismatch
+      onRehydrateStorage: () => () => {
         useCart.setState({ hasHydrated: true })
       },
     }
