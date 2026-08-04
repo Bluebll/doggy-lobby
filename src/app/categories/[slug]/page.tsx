@@ -6,6 +6,7 @@ import { formatPrice } from "@/lib/constants"
 import AddToCartButton from "@/components/cart/AddToCartButton"
 import WishlistButton from "@/components/wishlist/WishlistButton"
 import FilterBar from "@/components/filters/FilterBar"
+import { site } from "@/config/site"
 import type { Product } from "@/types/domain"
 
 export const revalidate = 60
@@ -13,10 +14,10 @@ export const revalidate = 60
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const category = await getCategoryBySlug(slug)
-  if (!category) return { title: "Category | Doggy Lobby" }
+  if (!category) return { title: `Category | ${site.name}` }
   return {
-    title: `${category.name} | Doggy Lobby`,
-    description: category.description ?? `Shop the best ${category.name} at Doggy Lobby.`,
+    title: `${category.name} | ${site.name}`,
+    description: category.description ?? `Shop the best ${category.name} at ${site.name}.`,
   }
 }
 

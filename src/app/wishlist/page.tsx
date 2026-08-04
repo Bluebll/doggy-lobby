@@ -1,9 +1,10 @@
 import Link from "next/link"
 import WishlistPageClient from "@/components/wishlist/WishlistPageClient"
+import { site } from "@/config/site"
 
 export const metadata = {
-  title: "Wishlist | Doggy Lobby",
-  description: "Your saved products at Doggy Lobby.",
+  title: `Wishlist | ${site.name}`,
+  description: `Your saved products at ${site.name}.`,
 }
 
 export default function WishlistPage() {

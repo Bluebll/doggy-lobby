@@ -5,6 +5,8 @@ import { motion } from "framer-motion"
 import { ArrowRight, MessageCircle, Star, ShieldCheck, Award } from "lucide-react"
 import MagneticButton from "@/components/ui/MagneticButton"
 import { useCursor } from "@/components/ui/CursorProvider"
+import { waHref } from "@/config/site"
+import { heroContent } from "@/config/content"
 
 export default function Hero() {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -20,7 +22,7 @@ export default function Hero() {
     setCursorText("")
   }
 
- const headline = "Everything Your Pet Needs Under One Roof"
+ const headline = heroContent.headline
   const words = headline.split(" ")
 
   return (
@@ -70,7 +72,7 @@ export default function Hero() {
               transition={{ duration: 0.8, delay: 0.1 + i * 0.05, ease: "easeOut" }}
               className="mr-2 sm:mr-3 md:mr-4 lg:mr-6 mb-2"
             >
-              {word === "Happy" || word === "Pets" ? <span className="text-gradient">{word}</span> : word}
+              {heroContent.highlightWords.includes(word) ? <span className="text-gradient">{word}</span> : word}
             </motion.span>
           ))}
         </h1>
@@ -81,7 +83,7 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 0.6 }}
           className="text-white/90 text-lg md:text-xl max-w-2xl mb-10 leading-relaxed font-medium"
         >
-          The finest nutrition, curated accessories, and premium care for Faridabad&apos;s most discerning pet parents.
+          {heroContent.subheadline}
         </motion.p>
 
         <motion.div
@@ -98,7 +100,7 @@ export default function Hero() {
           </div>
           
           <div onMouseEnter={() => handleMouseEnter("Chat", "visit")} onMouseLeave={handleMouseLeave} className="w-full sm:w-auto">
-            <MagneticButton href="https://wa.me/919876543210" className="group w-full sm:w-auto glass-dark px-8 py-4 rounded-full font-bold text-lg hover:bg-white hover:text-black transition-all justify-center">
+            <MagneticButton href={waHref()} className="group w-full sm:w-auto glass-dark px-8 py-4 rounded-full font-bold text-lg hover:bg-white hover:text-black transition-all justify-center">
               <MessageCircle size={20} className="text-[#25D366] group-hover:scale-110 transition-transform" />
               WhatsApp
             </MagneticButton>

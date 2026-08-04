@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import { Phone, MessageCircle, Navigation, MapPin, ShoppingBag } from "lucide-react"
 import { useCart } from "@/stores/cart-store"
+import { telHref, waHref, site } from "@/config/site"
 
 export default function MobileBottomNav() {
   const pathname = usePathname()
@@ -51,12 +52,12 @@ export default function MobileBottomNav() {
         >
           <div className="glass-card bg-white/90 backdrop-blur-xl rounded-full px-6 py-4 flex items-center justify-between shadow-[0_20px_40px_rgba(0,0,0,0.1)] border border-white">
             
-            <Link href="tel:+919876543210" aria-label="Call Store" className="flex flex-col items-center gap-1 text-black/60 hover:text-[var(--color-brand-orange)] transition-colors">
+            <Link href={telHref()} aria-label="Call Store" className="flex flex-col items-center gap-1 text-black/60 hover:text-[var(--color-brand-orange)] transition-colors">
               <Phone size={20} aria-hidden="true" />
               <span className="text-[10px] font-bold uppercase tracking-wider">Call</span>
             </Link>
 
-            <Link href="https://wa.me/919876543210" aria-label="Chat on WhatsApp" className="flex flex-col items-center gap-1 text-black/60 hover:text-[#25D366] transition-colors relative">
+            <Link href={waHref()} aria-label="Chat on WhatsApp" className="flex flex-col items-center gap-1 text-black/60 hover:text-[#25D366] transition-colors relative">
               <MessageCircle size={20} aria-hidden="true" />
               <span className="text-[10px] font-bold uppercase tracking-wider">Chat</span>
               <span className="absolute -top-1 -right-1 w-2 h-2 bg-[#25D366] rounded-full animate-ping"></span>
@@ -67,7 +68,7 @@ export default function MobileBottomNav() {
               <MapPin size={24} className="text-[var(--color-brand-orange)]" aria-hidden="true" />
             </Link>
 
-            <Link href="https://goo.gl/maps/placeholder" aria-label="Get Directions" target="_blank" className="flex flex-col items-center gap-1 text-black/60 hover:text-blue-500 transition-colors">
+            <Link href={site.mapsDirectionsUrl} aria-label="Get Directions" target="_blank" className="flex flex-col items-center gap-1 text-black/60 hover:text-blue-500 transition-colors">
               <Navigation size={20} aria-hidden="true" />
               <span className="text-[10px] font-bold uppercase tracking-wider">Route</span>
             </Link>

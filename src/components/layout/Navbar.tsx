@@ -8,6 +8,7 @@ import { Menu, X, Phone } from "lucide-react"
 import CartIcon from "@/components/cart/CartIcon"
 import WishlistIcon from "@/components/wishlist/WishlistIcon"
 import SearchBar from "@/components/search/SearchBar"
+import { telHref } from "@/config/site"
 
 const navLinks = [
   { name: "Shop", href: "#categories" },
@@ -70,7 +71,7 @@ export default function Navbar() {
         </nav>
 
         <div className="hidden md:flex items-center gap-4">
-          <Link href="tel:+919876543210" className="flex items-center gap-2 hover:text-[var(--color-brand-orange)] transition-colors group">
+          <Link href={telHref()} className="flex items-center gap-2 hover:text-[var(--color-brand-orange)] transition-colors group">
             <div className="w-8 h-8 rounded-full bg-white/50 border border-white/60 shadow-sm flex items-center justify-center group-hover:bg-white transition-colors">
               <Phone size={14} className="text-black" />
             </div>

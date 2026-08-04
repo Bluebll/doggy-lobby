@@ -1,23 +1,8 @@
 "use client"
 import { useState, useEffect } from "react"
+import { reviewsContent } from "@/config/content"
 
-const reviews = [
-  { name: "Yuganter", text: "My goto spot for all pet needs.", date: "1 month ago" },
-  { name: "Sushil", text: "Great variety at reasonable price.", date: "2 years ago" },
-  { name: "Monika", text: "Best shop in Faridabad.", date: "3 years ago" },
-  { name: "VIVEK", text: "Nice products, friendly staff.", date: "7 months ago" },
-  { name: "Harshita", text: "Best pet shop.", date: "1 year ago" },
-  { name: "Amit", text: "Excellent owner.", date: "2 years ago" },
-  { name: "Akash", text: "Best rates.", date: "2 years ago" },
-  { name: "Debasish", text: "Amazing collection.", date: "1 year ago" },
-  { name: "Maxzy", text: "Good quality.", date: "1 year ago" },
-  { name: "Vineet", text: "Good price.", date: "1 year ago" },
-  { name: "Ajay", text: "Best price.", date: "2 years ago" },
-  { name: "Arun", text: "All available.", date: "2 years ago" },
-  { name: "Anjali", text: "Quick delivery.", date: "1 year ago" },
-  { name: "Renu", text: "Very friendly.", date: "3 years ago" },
-  { name: "Sayyed", text: "Home delivery awesome.", date: "3 years ago" }
-]
+const reviews = reviewsContent
 
 export default function Reviews() {
   const [index, setIndex] = useState(0)

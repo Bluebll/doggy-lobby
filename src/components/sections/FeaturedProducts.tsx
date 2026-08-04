@@ -9,6 +9,7 @@ import type { Product } from "@/types/domain"
 import { formatPrice } from "@/lib/constants"
 import AddToCartButton from "@/components/cart/AddToCartButton"
 import WishlistButton from "@/components/wishlist/WishlistButton"
+import { site } from "@/config/site"
 
 const FALLBACK_IMAGE =
   "https://images.unsplash.com/photo-1601758260908-9dd6c47ffbfe?q=80&w=800&auto=format&fit=crop"
@@ -22,7 +23,7 @@ function productTag(p: Product): string {
 
 function productBrand(p: Product): string {
   const brand = (p.attributes as { brand?: string })?.brand
-  return brand ?? "Doggy Lobby"
+  return brand ?? site.name
 }
 
 function productCategory(p: Product): string {

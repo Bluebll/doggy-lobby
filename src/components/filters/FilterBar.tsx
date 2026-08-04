@@ -3,6 +3,7 @@
 import { useRouter, useSearchParams, usePathname } from "next/navigation"
 import { useState, useEffect } from "react"
 import { SlidersHorizontal, X } from "lucide-react"
+import { formatPrice } from "@/lib/constants"
 
 interface Props {
   brands: string[]
@@ -111,7 +112,7 @@ export default function FilterBar({ brands, minPrice, maxPrice }: Props) {
 
               <div>
                 <label className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2 inline-block">
-                  Price (₹{minPrice}–₹{maxPrice})
+                  Price ({formatPrice(minPrice)}–{formatPrice(maxPrice)})
                 </label>
                 <div className="flex gap-2">
                   <input

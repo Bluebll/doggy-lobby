@@ -1,11 +1,12 @@
 import Link from "next/link"
 import { getCategories } from "@/lib/queries/categories"
+import { site } from "@/config/site"
 
 export const revalidate = 60
 
 export const metadata = {
-  title: "Shop by Category | Doggy Lobby",
-  description: "Browse premium pet food, toys, accessories and more — curated by category.",
+  title: `Shop by Category | ${site.name}`,
+  description: "Browse our full range of premium categories.",
 }
 
 const GRADIENTS = [

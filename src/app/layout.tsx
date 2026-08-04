@@ -8,16 +8,10 @@ import MobileBottomNav from "@/components/layout/MobileBottomNav";
 import { CustomCursor, AmbientBackground, NoiseOverlay } from "@/components/ui/GlobalEffects";
 import { CursorProvider } from "@/components/ui/CursorProvider";
 import CartDrawer from "@/components/cart/CartDrawer";
+import { site } from "@/config/site";
 
-const manrope = Manrope({
-  variable: "--font-manrope",
-  subsets: ["latin"],
-});
-
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-});
+const manrope = Manrope({ variable: "--font-manrope", subsets: ["latin"] });
+const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
 
 export const viewport: Viewport = {
   themeColor: "#0a0a0a",
@@ -27,86 +21,53 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Doggy Lobby | Faridabad's Premium Destination For Happy Pets",
-  description: "Premium food, imported treats, grooming essentials, toys and accessories for every furry family member in Faridabad.",
-  keywords: ["Pet Shop Faridabad", "Dog Food Faridabad", "Cat Food Faridabad", "Pet Accessories Faridabad", "Greenfields Pet Store", "Premium Pet Store"],
-  authors: [{ name: "Doggy Lobby" }],
+  title: `${site.name} | ${site.tagline}`,
+  description: site.description,
+  keywords: site.seoKeywords,
+  authors: [{ name: site.name }],
   openGraph: {
     type: "website",
-    locale: "en_IN",
-    url: "https://doggylobby.in",
-    title: "Doggy Lobby | Premium Pet Store",
-    description: "Faridabad's most luxurious pet store. Curated imported brands, orthopedic beds, and organic treats.",
-    siteName: "Doggy Lobby",
-    images: [{
-      url: "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?q=80&w=1200&auto=format&fit=crop",
-      width: 1200,
-      height: 630,
-      alt: "Doggy Lobby Storefront",
-    }],
+    locale: site.locale,
+    url: site.url,
+    title: `${site.name} | ${site.tagline}`,
+    description: site.description,
+    siteName: site.name,
+    images: [{ url: site.heroImage, width: 1200, height: 630, alt: `${site.name} storefront` }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Doggy Lobby | Faridabad's Premium Pet Store",
-    description: "Premium food, imported treats, grooming essentials for pets in Faridabad.",
-  }
+    title: `${site.name} | ${site.tagline}`,
+    description: site.description,
+  },
 };
 
 const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "PetStore",
-  "name": "Doggy Lobby",
-  "image": "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?q=80&w=1200&auto=format&fit=crop",
-  "@id": "https://doggylobby.in",
-  "url": "https://doggylobby.in",
-  "telephone": "+919876543210",
-  "priceRange": "$$$",
-  "address": {
+  "@type": site.schemaType,
+  name: site.name,
+  image: site.heroImage,
+  "@id": site.url,
+  url: site.url,
+  telephone: site.phone,
+  priceRange: site.priceRange,
+  address: {
     "@type": "PostalAddress",
-    "streetAddress": "Sector 15 Market",
-    "addressLocality": "Faridabad",
-    "addressRegion": "Haryana",
-    "postalCode": "121007",
-    "addressCountry": "IN"
+    streetAddress: [site.address.line1, site.address.line2, site.address.line3].filter(Boolean).join(", "),
+    addressLocality: site.address.city,
+    addressRegion: site.address.region,
+    postalCode: site.address.postalCode,
+    addressCountry: site.address.country,
   },
-  "geo": {
-    "@type": "GeoCoordinates",
-    "latitude": 28.3974,
-    "longitude": 77.3195
-  },
-  "openingHoursSpecification": [{
-    "@type": "OpeningHoursSpecification",
-    "dayOfWeek": [
-      "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"
-    ],
-    "opens": "10:00",
-    "closes": "21:00"
-  },{
-    "@type": "OpeningHoursSpecification",
-    "dayOfWeek": [
-      "Saturday", "Sunday"
-    ],
-    "opens": "09:00",
-    "closes": "22:00"
-  }]
+  geo: { "@type": "GeoCoordinates", latitude: site.geo.lat, longitude: site.geo.lng },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
       <head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       </head>
-      <body
-        className={`${manrope.variable} ${inter.variable} font-sans bg-[var(--background)] text-[var(--foreground)] antialiased overflow-x-hidden`}
-      >
+      <body className={`${manrope.variable} ${inter.variable} font-sans bg-[var(--background)] text-[var(--foreground)] antialiased overflow-x-hidden`}>
         <CursorProvider>
           <NoiseOverlay />
           <AmbientBackground />

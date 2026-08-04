@@ -9,6 +9,7 @@ import WishlistButton from "@/components/wishlist/WishlistButton"
 import ProductGallery from "@/components/products/ProductGallery"
 import TrackRecentlyViewed from "@/components/products/TrackRecentlyViewed"
 import RecentlyViewed from "@/components/products/RecentlyViewed"
+import { site } from "@/config/site"
 import type { Category, Product } from "@/types/domain"
 
 export const revalidate = 60
@@ -16,10 +17,10 @@ export const revalidate = 60
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const product = await getProductBySlug(slug)
-  if (!product) return { title: "Product | Doggy Lobby" }
+  if (!product) return { title: `Product | ${site.name}` }
   return {
-    title: `${product.name} | Doggy Lobby`,
-    description: product.description ?? `Shop ${product.name} at Doggy Lobby.`,
+    title: `${product.name} | ${site.name}`,
+    description: product.description ?? `Shop ${product.name} at ${site.name}.`,
     openGraph: {
       title: product.name,
       description: product.description ?? "",
@@ -70,7 +71,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
   const images = product.images && product.images.length > 0 ? product.images : [FALLBACK]
   const attrs = product.attributes as Record<string, unknown>
-  const brand = (attrs?.brand as string) || "Doggy Lobby"
+  const brand = (attrs?.brand as string) || site.name
   const onOffer = product.compare_at_price && product.compare_at_price > product.price
   const discountPct = onOffer
     ? Math.round(((product.compare_at_price! - product.price) / product.compare_at_price!) * 100)

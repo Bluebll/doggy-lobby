@@ -4,13 +4,14 @@ import { formatPrice } from "@/lib/constants"
 import AddToCartButton from "@/components/cart/AddToCartButton"
 import WishlistButton from "@/components/wishlist/WishlistButton"
 import FilterBar from "@/components/filters/FilterBar"
+import { site } from "@/config/site"
 import type { Product } from "@/types/domain"
 
 export const revalidate = 60
 
 export const metadata = {
-  title: "All Products | Doggy Lobby",
-  description: "Browse every product available at Doggy Lobby.",
+  title: `All Products | ${site.name}`,
+  description: `Browse every product available at ${site.name}.`,
 }
 
 const FALLBACK =
