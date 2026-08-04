@@ -10,6 +10,7 @@ import ProductGallery from "@/components/products/ProductGallery"
 import TrackRecentlyViewed from "@/components/products/TrackRecentlyViewed"
 import RecentlyViewed from "@/components/products/RecentlyViewed"
 import { site } from "@/config/site"
+import { productJsonLd, breadcrumbJsonLd } from "@/lib/schema"
 import type { Category, Product } from "@/types/domain"
 
 export const revalidate = 60
@@ -18,13 +19,24 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params
   const product = await getProductBySlug(slug)
   if (!product) return { title: `Product | ${site.name}` }
+  const url = `${site.url.replace(/\/$/, "")}/products/${product.slug}`
+  const images = product.images && product.images.length > 0 ? product.images.slice(0, 4) : [site.heroImage]
   return {
-    title: `${product.name} | ${site.name}`,
+    title: `${product.name}`,
     description: product.description ?? `Shop ${product.name} at ${site.name}.`,
+    alternates: { canonical: url },
     openGraph: {
+      title: `${product.name} | ${site.name}`,
+      description: product.description ?? "",
+      url,
+      type: "website",
+      images: images.map((u) => ({ url: u })),
+    },
+    twitter: {
+      card: "summary_large_image",
       title: product.name,
       description: product.description ?? "",
-      images: product.images?.[0] ? [product.images[0]] : [],
+      images,
     },
   }
 }
@@ -77,25 +89,29 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
     ? Math.round(((product.compare_at_price! - product.price) / product.compare_at_price!) * 100)
     : 0
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Product",
+  const jsonLd = productJsonLd({
     name: product.name,
-    description: product.description ?? "",
-    image: images,
-    sku: product.sku ?? undefined,
-    brand: { "@type": "Brand", name: brand },
-    offers: {
-      "@type": "Offer",
-      priceCurrency: process.env.NEXT_PUBLIC_STORE_CURRENCY || "INR",
-      price: product.price,
-      availability: product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
-    },
-  }
+    description: product.description,
+    images,
+    sku: product.sku,
+    price: product.price,
+    stock: product.stock,
+    brand,
+    slug: product.slug,
+  })
+
+  const crumbs = breadcrumbJsonLd([
+    { name: "Home", url: site.url },
+    ...(category
+      ? [{ name: category.name, url: `${site.url.replace(/\/$/, "")}/categories/${category.slug}` }]
+      : [{ name: "Products", url: `${site.url.replace(/\/$/, "")}/products` }]),
+    { name: product.name, url: `${site.url.replace(/\/$/, "")}/products/${product.slug}` },
+  ])
 
   return (
     <section className="pt-32 md:pt-40 pb-24 bg-white min-h-screen">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(crumbs) }} />
       <TrackRecentlyViewed product={product} />
 
       <div className="container mx-auto px-6">

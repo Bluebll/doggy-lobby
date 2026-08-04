@@ -9,6 +9,7 @@ import { CustomCursor, AmbientBackground, NoiseOverlay } from "@/components/ui/G
 import { CursorProvider } from "@/components/ui/CursorProvider";
 import CartDrawer from "@/components/cart/CartDrawer";
 import { site } from "@/config/site";
+import { organizationJsonLd, localBusinessJsonLd } from "@/lib/schema";
 
 const manrope = Manrope({ variable: "--font-manrope", subsets: ["latin"] });
 const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
@@ -21,10 +22,16 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: `${site.name} | ${site.tagline}`,
+  metadataBase: new URL(site.url),
+  title: {
+    default: `${site.name} | ${site.tagline}`,
+    template: `%s | ${site.name}`,
+  },
   description: site.description,
   keywords: site.seoKeywords,
   authors: [{ name: site.name }],
+  alternates: { canonical: "/" },
+  robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
   openGraph: {
     type: "website",
     locale: site.locale,
@@ -38,34 +45,16 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: `${site.name} | ${site.tagline}`,
     description: site.description,
+    images: [site.heroImage],
   },
-};
-
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": site.schemaType,
-  name: site.name,
-  image: site.heroImage,
-  "@id": site.url,
-  url: site.url,
-  telephone: site.phone,
-  priceRange: site.priceRange,
-  address: {
-    "@type": "PostalAddress",
-    streetAddress: [site.address.line1, site.address.line2, site.address.line3].filter(Boolean).join(", "),
-    addressLocality: site.address.city,
-    addressRegion: site.address.region,
-    postalCode: site.address.postalCode,
-    addressCountry: site.address.country,
-  },
-  geo: { "@type": "GeoCoordinates", latitude: site.geo.lat, longitude: site.geo.lng },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
       <head>
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd()) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd()) }} />
       </head>
       <body className={`${manrope.variable} ${inter.variable} font-sans bg-[var(--background)] text-[var(--foreground)] antialiased overflow-x-hidden`}>
         <CursorProvider>

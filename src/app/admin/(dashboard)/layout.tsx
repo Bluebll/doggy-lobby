@@ -2,6 +2,7 @@ import { requireAdmin } from "@/lib/admin-auth"
 import AdminShell from "@/components/admin/AdminShell"
 
 export const dynamic = "force-dynamic"
+export const metadata = { robots: { index: false, follow: false } }
 
 export default async function AdminDashboardLayout({ children }: { children: React.ReactNode }) {
   const user = await requireAdmin()

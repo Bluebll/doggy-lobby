@@ -7,6 +7,7 @@ import AddToCartButton from "@/components/cart/AddToCartButton"
 import WishlistButton from "@/components/wishlist/WishlistButton"
 import FilterBar from "@/components/filters/FilterBar"
 import { site } from "@/config/site"
+import { breadcrumbJsonLd } from "@/lib/schema"
 import type { Product } from "@/types/domain"
 
 export const revalidate = 60
@@ -15,9 +16,17 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params
   const category = await getCategoryBySlug(slug)
   if (!category) return { title: `Category | ${site.name}` }
+  const url = `${site.url.replace(/\/$/, "")}/categories/${category.slug}`
   return {
-    title: `${category.name} | ${site.name}`,
+    title: category.name,
     description: category.description ?? `Shop the best ${category.name} at ${site.name}.`,
+    alternates: { canonical: url },
+    openGraph: {
+      title: `${category.name} | ${site.name}`,
+      description: category.description ?? "",
+      url,
+      images: category.image_url ? [{ url: category.image_url }] : [],
+    },
   }
 }
 
@@ -103,6 +112,11 @@ export default async function CategoryDetailPage({
 
   return (
     <section className="pt-32 md:pt-40 pb-24 bg-white min-h-screen">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd([
+        { name: "Home", url: site.url },
+        { name: "Categories", url: `${site.url.replace(/\/$/, "")}/categories` },
+        { name: category.name, url: `${site.url.replace(/\/$/, "")}/categories/${category.slug}` },
+      ])) }} />
       <div className="container mx-auto px-6">
         {/* Breadcrumb */}
         <nav className="text-sm text-gray-500 mb-8">

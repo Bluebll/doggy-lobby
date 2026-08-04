@@ -3,8 +3,10 @@ import WishlistPageClient from "@/components/wishlist/WishlistPageClient"
 import { site } from "@/config/site"
 
 export const metadata = {
-  title: `Wishlist | ${site.name}`,
+  title: "Wishlist",
   description: `Your saved products at ${site.name}.`,
+  alternates: { canonical: "/wishlist" },
+  robots: { index: false, follow: true },
 }
 
 export default function WishlistPage() {

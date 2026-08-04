@@ -5,8 +5,9 @@ import { site } from "@/config/site"
 export const revalidate = 60
 
 export const metadata = {
-  title: `Shop by Category | ${site.name}`,
+  title: "Shop by Category",
   description: "Browse our full range of premium categories.",
+  alternates: { canonical: "/categories" },
 }
 
 const GRADIENTS = [

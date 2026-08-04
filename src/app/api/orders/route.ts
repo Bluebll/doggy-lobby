@@ -71,6 +71,13 @@ export async function POST(req: Request) {
 
     if (orderErr) return NextResponse.json({ error: orderErr.message }, { status: 500 })
 
+    // Decrement stock atomically per item (best-effort; order already saved)
+    await Promise.all(
+      snapshot.map((it) =>
+        supabase.rpc("decrement_stock", { p_id: it.product_id, p_qty: it.qty })
+      )
+    ).catch(() => {})
+
     return NextResponse.json({ order })
   } catch (e) {
     const msg = e instanceof Error ? e.message : "Unknown error"

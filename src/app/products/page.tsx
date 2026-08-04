@@ -10,8 +10,9 @@ import type { Product } from "@/types/domain"
 export const revalidate = 60
 
 export const metadata = {
-  title: `All Products | ${site.name}`,
+  title: "All Products",
   description: `Browse every product available at ${site.name}.`,
+  alternates: { canonical: "/products" },
 }
 
 const FALLBACK =
