@@ -9,15 +9,24 @@ import Gallery from "@/components/sections/Gallery"
 import Reviews from "@/components/sections/Reviews"
 import FAQ from "@/components/sections/FAQ"
 import Contact from "@/components/sections/Contact"
+import { getCategories } from "@/lib/queries/categories"
+import { getFeaturedProducts } from "@/lib/queries/products"
 
-export default function Home() {
+export const revalidate = 60
+
+export default async function Home() {
+  const [categories, featured] = await Promise.all([
+    getCategories(),
+    getFeaturedProducts(8),
+  ])
+
   return (
     <main>
       <Hero />
       <TrustBar />
       <ShopByPet />
-      <Categories />
-      <FeaturedProducts />
+      <Categories categories={categories} />
+      <FeaturedProducts products={featured} />
       <Statistics />
       <About />
       <Gallery />

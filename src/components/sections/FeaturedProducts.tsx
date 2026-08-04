@@ -1,115 +1,97 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef } from "react"
+import Link from "next/link"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { motion } from "framer-motion"
 import { ShoppingBag } from "lucide-react"
+import type { Product } from "@/types/domain"
+import { formatPrice } from "@/lib/constants"
 
-const products = [
-  { 
-    name: "Premium Wagyu Dog Treats", 
-    brand: "Hokkaido Farms",
-    desc: "Air-dried to preserve raw nutrients and rich flavor.",
-    price: "₹1,299", 
-    image: "https://images.unsplash.com/photo-1582798358481-d199fb7347bb?q=80&w=800&auto=format&fit=crop", 
-    tag: "Bestseller", 
-    category: "Treats" 
-  },
-  { 
-    name: "Orthopedic Memory Foam Bed", 
-    brand: "SleepyPaws",
-    desc: "Engineered for joint relief and deep REM sleep.",
-    price: "₹4,499", 
-    image: "https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?q=80&w=800&auto=format&fit=crop", 
-    tag: "New", 
-    category: "Beds" 
-  },
-  { 
-    name: "Grain-Free Salmon Feast", 
-    brand: "WildCatch",
-    desc: "Rich in Omega-3s for a glowing, healthy coat.",
-    price: "₹2,199", 
-    image: "https://images.unsplash.com/photo-1768326119213-e0ad875083a3?q=80&w=800&auto=format&fit=crop", 
-    tag: "", 
-    category: "Food" 
-  },
-  { 
-    name: "Indestructible Chew Toy", 
-    brand: "ToughBite",
-    desc: "Medical-grade rubber that withstands the toughest jaws.",
-    price: "₹899", 
-    image: "https://images.pexels.com/photos/7789449/pexels-photo-7789449.jpeg?auto=compress&cs=tinysrgb&w=800", 
-    tag: "", 
-    category: "Toys" 
-  },
-  { 
-    name: "Ceramic Slow Feeder Bowl", 
-    brand: "ZenPet",
-    desc: "Promotes healthy digestion and prevents bloating.",
-    price: "₹1,499", 
-    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Green_Spiral_Slow_Feeder_Dog_Bowl.jpg/960px-Green_Spiral_Slow_Feeder_Dog_Bowl.jpg", 
-    tag: "Trending", 
-    category: "Accessories" 
-  },
-]
+const FALLBACK_IMAGE =
+  "https://images.unsplash.com/photo-1601758260908-9dd6c47ffbfe?q=80&w=800&auto=format&fit=crop"
 
-function ProductCard({ product }: { product: typeof products[0] }) {
-  const [isHovered, setIsHovered] = useState(false)
-  
+function productTag(p: Product): string {
+  if (p.is_best_seller) return "Bestseller"
+  if (p.is_on_offer) return "Offer"
+  if (p.is_featured) return "Featured"
+  return ""
+}
+
+function productBrand(p: Product): string {
+  const brand = (p.attributes as { brand?: string })?.brand
+  return brand ?? "Doggy Lobby"
+}
+
+function productCategory(p: Product): string {
+  const c = (p.attributes as { category?: string })?.category
+  return c ?? ""
+}
+
+function ProductCard({ product }: { product: Product }) {
+  const tag = productTag(product)
+  const image = product.images?.[0] || FALLBACK_IMAGE
+
   return (
-    <motion.div 
-className="w-[300px] md:w-[400px] h-[550px] md:h-[600px] flex flex-col group cursor-pointer bg-white rounded-[var(--radius-3xl)] overflow-hidden shadow-md hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-black/5"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      {/* Image Container */}
-      <div className="relative h-[55%] w-full overflow-hidden bg-gray-100">
-        {product.tag && (
-          <div className="absolute top-4 left-4 z-20 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider text-black shadow-sm">
-            {product.tag}
+    <Link href={`/products/${product.slug}`} className="block">
+      <motion.div
+        className="w-[300px] md:w-[400px] h-[550px] md:h-[600px] flex flex-col group cursor-pointer bg-white rounded-[var(--radius-3xl)] overflow-hidden shadow-md hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-black/5"
+      >
+        {/* Image Container */}
+        <div className="relative h-[55%] w-full overflow-hidden bg-gray-100">
+          {tag && (
+            <div className="absolute top-4 left-4 z-20 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider text-black shadow-sm">
+              {tag}
+            </div>
+          )}
+
+          <img
+            src={image}
+            alt={product.name}
+            className="absolute inset-0 w-full h-full object-cover z-10"
+          />
+        </div>
+
+        {/* Content Container */}
+        <div className="flex flex-col flex-1 p-6 md:p-8 bg-white relative">
+          <div className="flex justify-between items-start mb-2">
+            <p className="text-[var(--color-brand-orange)] text-xs font-bold tracking-widest uppercase">{productBrand(product)}</p>
+            {productCategory(product) && (
+              <p className="text-gray-400 text-xs font-semibold tracking-wider uppercase">{productCategory(product)}</p>
+            )}
           </div>
-        )}
-        
-        <img 
-          src={product.image} 
-          alt={product.name}
-          className="absolute inset-0 w-full h-full object-cover z-10"
 
-        />
-      </div>
-      
-      {/* Content Container */}
-      <div className="flex flex-col flex-1 p-6 md:p-8 bg-white relative">
-        <div className="flex justify-between items-start mb-2">
-          <p className="text-[var(--color-brand-orange)] text-xs font-bold tracking-widest uppercase">{product.brand}</p>
-          <p className="text-gray-400 text-xs font-semibold tracking-wider uppercase">{product.category}</p>
-        </div>
-        
-        <h4 className="font-heading font-extrabold text-xl md:text-2xl text-black leading-snug mb-3">
-          {product.name}
-        </h4>
-        
-        <p className="text-gray-500 text-sm md:text-base leading-relaxed mb-auto line-clamp-2">
-          {product.desc}
-        </p>
-        
-        <div className="flex items-center justify-end mt-6 pt-6 border-t border-gray-100">
+          <h4 className="font-heading font-extrabold text-xl md:text-2xl text-black leading-snug mb-3">
+            {product.name}
+          </h4>
 
-          
-          <button 
-            className="w-12 h-12 rounded-full bg-black text-white flex items-center justify-center group-hover:bg-[var(--color-brand-orange)] transition-all duration-300 group-hover:scale-110"
-            aria-label={`Add ${product.name} to cart`}
-          >
-            <ShoppingBag size={18} />
-          </button>
+          <p className="text-gray-500 text-sm md:text-base leading-relaxed mb-auto line-clamp-2">
+            {product.description}
+          </p>
+
+          <div className="flex items-center justify-between mt-6 pt-6 border-t border-gray-100">
+            <div className="flex flex-col">
+              <span className="font-heading font-extrabold text-xl text-black">{formatPrice(product.price)}</span>
+              {product.compare_at_price && product.compare_at_price > product.price && (
+                <span className="text-gray-400 text-sm line-through">{formatPrice(product.compare_at_price)}</span>
+              )}
+            </div>
+
+            <button
+              className="w-12 h-12 rounded-full bg-black text-white flex items-center justify-center group-hover:bg-[var(--color-brand-orange)] transition-all duration-300 group-hover:scale-110"
+              aria-label={`View ${product.name}`}
+            >
+              <ShoppingBag size={18} />
+            </button>
+          </div>
         </div>
-      </div>
-    </motion.div>
+      </motion.div>
+    </Link>
   )
 }
 
-export default function FeaturedProducts() {
+export default function FeaturedProducts({ products = [] }: { products?: Product[] }) {
   const containerRef = useRef<HTMLDivElement>(null)
   const textRef = useRef<HTMLDivElement>(null)
 
@@ -151,11 +133,11 @@ export default function FeaturedProducts() {
 
       {/* Native Horizontal Scroll Carousel */}
       <div className="w-full pl-6 md:pl-12">
-        <div 
+        <div
           className="flex gap-6 md:gap-8 overflow-x-auto snap-x snap-mandatory pb-16 pr-6 md:pr-12 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] cursor-grab active:cursor-grabbing"
         >
-          {products.map((product, idx) => (
-            <div key={idx} className="snap-center md:snap-start shrink-0">
+          {products.map((product) => (
+            <div key={product.id} className="snap-center md:snap-start shrink-0">
               <ProductCard product={product} />
             </div>
           ))}
