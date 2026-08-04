@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import { Phone, MessageCircle, Navigation, MapPin, ShoppingBag } from "lucide-react"
 import { useCart } from "@/stores/cart-store"
 
 export default function MobileBottomNav() {
+  const pathname = usePathname()
   const [isVisible, setIsVisible] = useState(true)
   const [lastScrollY, setLastScrollY] = useState(0)
   const openCart = useCart((s) => s.openCart)
@@ -33,6 +35,9 @@ export default function MobileBottomNav() {
   if (typeof window !== "undefined" && window.innerWidth >= 768) {
     return null
   }
+
+  // Hide on admin routes
+  if (pathname?.startsWith("/admin")) return null
 
   return (
     <AnimatePresence>

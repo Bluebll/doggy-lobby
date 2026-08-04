@@ -1,4 +1,7 @@
+"use client"
+
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { MapPin, Phone, Mail, ArrowUpRight, Star, Send } from "lucide-react"
 
 const igPosts = [
@@ -17,6 +20,8 @@ const InstagramIcon = ({ className = "", size = 24 }: { className?: string, size
 )
 
 export default function Footer() {
+  const pathname = usePathname()
+  if (pathname?.startsWith("/admin")) return null
   return (
     <footer className="bg-[#0a0a0a] text-white pt-32 pb-24 md:pb-12 overflow-hidden relative selection:bg-[var(--color-brand-orange)] selection:text-white">
       {/* Dark Ambient Gradients */}

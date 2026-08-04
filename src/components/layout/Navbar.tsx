@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import { Menu, X, Phone } from "lucide-react"
 import CartIcon from "@/components/cart/CartIcon"
@@ -16,6 +17,7 @@ const navLinks = [
 ]
 
 export default function Navbar() {
+  const pathname = usePathname()
   const [isScrolled, setIsScrolled] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [activeHover, setActiveHover] = useState<string | null>(null)
@@ -27,6 +29,8 @@ export default function Navbar() {
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
+
+  if (pathname?.startsWith("/admin")) return null
 
   return (
     <header

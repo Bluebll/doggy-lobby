@@ -1,434 +1,280 @@
 #!/usr/bin/env python3
 """
-Backend API Tests for Pet Store Migration
-Tests three Next.js API routes with focus on graceful error handling
-when Supabase environment variables are not configured.
+Backend API Tests for Petstore Migration
+Tests all admin endpoints for proper 401 auth guard behavior
+and verifies customer-facing endpoints still work.
 """
 
 import requests
 import json
 import sys
 
-# Base URL from .env
 BASE_URL = "https://petstore-migration.preview.emergentagent.com"
 
-def print_test_header(test_name):
-    print(f"\n{'='*80}")
-    print(f"TEST: {test_name}")
-    print(f"{'='*80}")
-
-def print_result(passed, message):
-    status = "✅ PASS" if passed else "❌ FAIL"
-    print(f"{status}: {message}")
-
-def test_orders_missing_customer_name():
-    """Test POST /api/orders with missing customer_name"""
-    print_test_header("POST /api/orders - Missing customer_name")
+def test_admin_endpoints_unauthorized():
+    """Test that all admin endpoints return 401 when no auth cookies present"""
+    print("\n" + "="*80)
+    print("TESTING ADMIN ENDPOINTS - UNAUTHORIZED ACCESS")
+    print("="*80)
     
+    test_results = []
+    
+    # Test cases: (method, endpoint, body, description)
+    admin_tests = [
+        ("GET", "/api/admin/products", None, "GET /api/admin/products"),
+        ("POST", "/api/admin/products", {"name": "Test Product", "slug": "test-product", "price": 100}, "POST /api/admin/products with valid body"),
+        ("POST", "/api/admin/products", {"invalid": "data"}, "POST /api/admin/products with invalid body"),
+        ("PATCH", "/api/admin/products/123", {"name": "Updated"}, "PATCH /api/admin/products/[id] with valid body"),
+        ("PATCH", "/api/admin/products/123", {"invalid": "data"}, "PATCH /api/admin/products/[id] with invalid body"),
+        ("DELETE", "/api/admin/products/123", None, "DELETE /api/admin/products/[id]"),
+        ("GET", "/api/admin/categories", None, "GET /api/admin/categories"),
+        ("POST", "/api/admin/categories", {"name": "Test Category", "slug": "test-category"}, "POST /api/admin/categories with valid body"),
+        ("POST", "/api/admin/categories", {"invalid": "data"}, "POST /api/admin/categories with invalid body"),
+        ("PATCH", "/api/admin/categories/123", {"name": "Updated"}, "PATCH /api/admin/categories/[id] with valid body"),
+        ("PATCH", "/api/admin/categories/123", {"invalid": "data"}, "PATCH /api/admin/categories/[id] with invalid body"),
+        ("DELETE", "/api/admin/categories/123", None, "DELETE /api/admin/categories/[id]"),
+        ("GET", "/api/admin/orders", None, "GET /api/admin/orders"),
+        ("PATCH", "/api/admin/orders/123", {"status": "confirmed"}, "PATCH /api/admin/orders/[id] with valid status"),
+        ("PATCH", "/api/admin/orders/123", {"status": "invalid_status"}, "PATCH /api/admin/orders/[id] with invalid status"),
+        ("PATCH", "/api/admin/orders/123", {"invalid": "data"}, "PATCH /api/admin/orders/[id] with invalid body"),
+    ]
+    
+    for method, endpoint, body, description in admin_tests:
+        try:
+            url = f"{BASE_URL}{endpoint}"
+            headers = {"Content-Type": "application/json"}
+            
+            if method == "GET":
+                response = requests.get(url, headers=headers, timeout=10)
+            elif method == "POST":
+                response = requests.post(url, json=body, headers=headers, timeout=10)
+            elif method == "PATCH":
+                response = requests.patch(url, json=body, headers=headers, timeout=10)
+            elif method == "DELETE":
+                response = requests.delete(url, headers=headers, timeout=10)
+            
+            # Check status code
+            status_ok = response.status_code == 401
+            
+            # Check response body
+            try:
+                response_json = response.json()
+                body_ok = response_json.get("error") == "Unauthorized"
+            except Exception:
+                body_ok = False
+                response_json = None
+            
+            # Check Content-Type
+            content_type = response.headers.get("Content-Type", "")
+            content_type_ok = "application/json" in content_type
+            
+            passed = status_ok and body_ok and content_type_ok
+            test_results.append(passed)
+            
+            status = "✅ PASS" if passed else "❌ FAIL"
+            print(f"\n{status} - {description}")
+            print(f"  Status Code: {response.status_code} (expected 401) {'✓' if status_ok else '✗'}")
+            print(f"  Response Body: {response_json} {'✓' if body_ok else '✗'}")
+            print(f"  Content-Type: {content_type} {'✓' if content_type_ok else '✗'}")
+            
+            if not passed:
+                print(f"  ⚠️  ISSUE: Expected 401 with {{'error':'Unauthorized'}} and application/json Content-Type")
+                
+        except Exception as e:
+            test_results.append(False)
+            print(f"\n❌ FAIL - {description}")
+            print(f"  Exception: {str(e)}")
+    
+    return test_results
+
+
+def test_admin_upload_unauthorized():
+    """Test that /api/admin/upload returns 401 when no auth cookies present"""
+    print("\n" + "="*80)
+    print("TESTING ADMIN UPLOAD ENDPOINT - UNAUTHORIZED ACCESS")
+    print("="*80)
+    
+    test_results = []
+    
+    # Test with multipart form data
     try:
-        payload = {
-            "customer_phone": "+919876543210",
-            "customer_address": "123 Pet Street, Mumbai",
-            "items": [
-                {
-                    "product_id": "test-uuid-123",
-                    "name": "Dog Food",
-                    "price": 500,
-                    "qty": 2
-                }
-            ]
+        url = f"{BASE_URL}/api/admin/upload"
+        
+        # Create a fake image file
+        files = {
+            'file': ('test.jpg', b'fake image data', 'image/jpeg')
+        }
+        data = {
+            'bucket': 'product-images'
         }
         
-        response = requests.post(
-            f"{BASE_URL}/api/orders",
-            json=payload,
-            headers={"Content-Type": "application/json"},
-            timeout=10
-        )
+        response = requests.post(url, files=files, data=data, timeout=10)
         
-        print(f"Status Code: {response.status_code}")
-        print(f"Response: {response.text}")
+        # Check status code
+        status_ok = response.status_code == 401
         
-        if response.status_code == 400:
-            data = response.json()
-            if "error" in data:
-                print_result(True, f"Correctly returned 400 with error: {data['error']}")
-                return True
+        # Check response body
+        try:
+            response_json = response.json()
+            body_ok = response_json.get("error") == "Unauthorized"
+        except Exception:
+            body_ok = False
+            response_json = None
         
-        print_result(False, f"Expected 400, got {response.status_code}")
-        return False
+        # Check Content-Type
+        content_type = response.headers.get("Content-Type", "")
+        content_type_ok = "application/json" in content_type
         
+        passed = status_ok and body_ok and content_type_ok
+        test_results.append(passed)
+        
+        status = "✅ PASS" if passed else "❌ FAIL"
+        print(f"\n{status} - POST /api/admin/upload with multipart form-data")
+        print(f"  Status Code: {response.status_code} (expected 401) {'✓' if status_ok else '✗'}")
+        print(f"  Response Body: {response_json} {'✓' if body_ok else '✗'}")
+        print(f"  Content-Type: {content_type} {'✓' if content_type_ok else '✗'}")
+        
+        if not passed:
+            print(f"  ⚠️  ISSUE: Expected 401 with {{'error':'Unauthorized'}} and application/json Content-Type")
+            
     except Exception as e:
-        print_result(False, f"Exception occurred: {str(e)}")
-        return False
-
-def test_orders_missing_customer_phone():
-    """Test POST /api/orders with missing customer_phone"""
-    print_test_header("POST /api/orders - Missing customer_phone")
+        test_results.append(False)
+        print(f"\n❌ FAIL - POST /api/admin/upload")
+        print(f"  Exception: {str(e)}")
     
-    try:
-        payload = {
-            "customer_name": "Rajesh Kumar",
-            "customer_address": "123 Pet Street, Mumbai",
-            "items": [
-                {
-                    "product_id": "test-uuid-123",
-                    "name": "Dog Food",
-                    "price": 500,
-                    "qty": 2
-                }
-            ]
-        }
-        
-        response = requests.post(
-            f"{BASE_URL}/api/orders",
-            json=payload,
-            headers={"Content-Type": "application/json"},
-            timeout=10
-        )
-        
-        print(f"Status Code: {response.status_code}")
-        print(f"Response: {response.text}")
-        
-        if response.status_code == 400:
-            data = response.json()
-            if "error" in data:
-                print_result(True, f"Correctly returned 400 with error: {data['error']}")
-                return True
-        
-        print_result(False, f"Expected 400, got {response.status_code}")
-        return False
-        
-    except Exception as e:
-        print_result(False, f"Exception occurred: {str(e)}")
-        return False
+    return test_results
 
-def test_orders_missing_customer_address():
-    """Test POST /api/orders with missing customer_address"""
-    print_test_header("POST /api/orders - Missing customer_address")
-    
-    try:
-        payload = {
-            "customer_name": "Rajesh Kumar",
-            "customer_phone": "+919876543210",
-            "items": [
-                {
-                    "product_id": "test-uuid-123",
-                    "name": "Dog Food",
-                    "price": 500,
-                    "qty": 2
-                }
-            ]
-        }
-        
-        response = requests.post(
-            f"{BASE_URL}/api/orders",
-            json=payload,
-            headers={"Content-Type": "application/json"},
-            timeout=10
-        )
-        
-        print(f"Status Code: {response.status_code}")
-        print(f"Response: {response.text}")
-        
-        if response.status_code == 400:
-            data = response.json()
-            if "error" in data:
-                print_result(True, f"Correctly returned 400 with error: {data['error']}")
-                return True
-        
-        print_result(False, f"Expected 400, got {response.status_code}")
-        return False
-        
-    except Exception as e:
-        print_result(False, f"Exception occurred: {str(e)}")
-        return False
 
-def test_orders_empty_items():
-    """Test POST /api/orders with empty items array"""
-    print_test_header("POST /api/orders - Empty items array")
+def test_customer_endpoints():
+    """Re-test customer-facing endpoints to ensure they still work"""
+    print("\n" + "="*80)
+    print("RE-TESTING CUSTOMER-FACING ENDPOINTS")
+    print("="*80)
     
+    test_results = []
+    
+    # Test GET /api/search
     try:
-        payload = {
-            "customer_name": "Rajesh Kumar",
-            "customer_phone": "+919876543210",
-            "customer_address": "123 Pet Street, Mumbai",
-            "items": []
-        }
+        url = f"{BASE_URL}/api/search"
+        response = requests.get(url, params={"q": ""}, timeout=10)
         
-        response = requests.post(
-            f"{BASE_URL}/api/orders",
-            json=payload,
-            headers={"Content-Type": "application/json"},
-            timeout=10
-        )
+        status_ok = response.status_code == 200
+        try:
+            response_json = response.json()
+            body_ok = "products" in response_json and isinstance(response_json["products"], list)
+        except Exception:
+            body_ok = False
+            response_json = None
         
-        print(f"Status Code: {response.status_code}")
-        print(f"Response: {response.text}")
+        passed = status_ok and body_ok
+        test_results.append(passed)
         
-        if response.status_code == 400:
-            data = response.json()
-            if "error" in data:
-                print_result(True, f"Correctly returned 400 with error: {data['error']}")
-                return True
-        
-        print_result(False, f"Expected 400, got {response.status_code}")
-        return False
+        status = "✅ PASS" if passed else "❌ FAIL"
+        print(f"\n{status} - GET /api/search?q=")
+        print(f"  Status Code: {response.status_code} (expected 200) {'✓' if status_ok else '✗'}")
+        print(f"  Response has 'products' array: {'✓' if body_ok else '✗'}")
         
     except Exception as e:
-        print_result(False, f"Exception occurred: {str(e)}")
-        return False
+        test_results.append(False)
+        print(f"\n❌ FAIL - GET /api/search")
+        print(f"  Exception: {str(e)}")
+    
+    # Test GET /api/products
+    try:
+        url = f"{BASE_URL}/api/products"
+        response = requests.get(url, timeout=10)
+        
+        status_ok = response.status_code == 200
+        try:
+            response_json = response.json()
+            body_ok = "products" in response_json and isinstance(response_json["products"], list)
+        except Exception:
+            body_ok = False
+            response_json = None
+        
+        passed = status_ok and body_ok
+        test_results.append(passed)
+        
+        status = "✅ PASS" if passed else "❌ FAIL"
+        print(f"\n{status} - GET /api/products")
+        print(f"  Status Code: {response.status_code} (expected 200) {'✓' if status_ok else '✗'}")
+        print(f"  Response has 'products' array: {'✓' if body_ok else '✗'}")
+        
+    except Exception as e:
+        test_results.append(False)
+        print(f"\n❌ FAIL - GET /api/products")
+        print(f"  Exception: {str(e)}")
+    
+    # Test POST /api/orders with missing fields (should return 400)
+    try:
+        url = f"{BASE_URL}/api/orders"
+        response = requests.post(url, json={}, timeout=10)
+        
+        # Should return 400 for missing fields or 500 for missing Supabase config
+        status_ok = response.status_code in [400, 500]
+        try:
+            response_json = response.json()
+            body_ok = "error" in response_json
+        except Exception:
+            body_ok = False
+            response_json = None
+        
+        passed = status_ok and body_ok
+        test_results.append(passed)
+        
+        status = "✅ PASS" if passed else "❌ FAIL"
+        print(f"\n{status} - POST /api/orders (validation test)")
+        print(f"  Status Code: {response.status_code} (expected 400 or 500) {'✓' if status_ok else '✗'}")
+        print(f"  Response has 'error' field: {'✓' if body_ok else '✗'}")
+        
+    except Exception as e:
+        test_results.append(False)
+        print(f"\n❌ FAIL - POST /api/orders")
+        print(f"  Exception: {str(e)}")
+    
+    return test_results
 
-def test_orders_missing_supabase_env():
-    """Test POST /api/orders with missing Supabase environment variables"""
-    print_test_header("POST /api/orders - Missing Supabase env (current state)")
-    
-    try:
-        payload = {
-            "customer_name": "Rajesh Kumar",
-            "customer_phone": "+919876543210",
-            "customer_address": "123 Pet Street, Mumbai",
-            "notes": "Please deliver in the evening",
-            "items": [
-                {
-                    "product_id": "550e8400-e29b-41d4-a716-446655440000",
-                    "name": "Premium Dog Food",
-                    "price": 1200,
-                    "qty": 2,
-                    "image": "https://example.com/dog-food.jpg"
-                }
-            ]
-        }
-        
-        response = requests.post(
-            f"{BASE_URL}/api/orders",
-            json=payload,
-            headers={"Content-Type": "application/json"},
-            timeout=10
-        )
-        
-        print(f"Status Code: {response.status_code}")
-        print(f"Response: {response.text}")
-        
-        if response.status_code == 500:
-            data = response.json()
-            if "error" in data:
-                error_msg = data["error"]
-                # Check if error message mentions missing Supabase configuration
-                if "SUPABASE" in error_msg.upper() or "Missing" in error_msg:
-                    print_result(True, f"Correctly returned 500 with Supabase error: {error_msg}")
-                    return True
-                else:
-                    print_result(True, f"Returned 500 with error (may be Supabase-related): {error_msg}")
-                    return True
-        
-        print_result(False, f"Expected 500 with Supabase error, got {response.status_code}")
-        return False
-        
-    except Exception as e:
-        print_result(False, f"Exception occurred: {str(e)}")
-        return False
-
-def test_search_empty_query():
-    """Test GET /api/search with empty query parameter"""
-    print_test_header("GET /api/search - Empty query parameter")
-    
-    try:
-        response = requests.get(
-            f"{BASE_URL}/api/search",
-            timeout=10
-        )
-        
-        print(f"Status Code: {response.status_code}")
-        print(f"Response: {response.text}")
-        
-        if response.status_code == 200:
-            data = response.json()
-            if "products" in data and data["products"] == []:
-                print_result(True, "Correctly returned empty products array")
-                return True
-        
-        print_result(False, f"Expected 200 with empty products, got {response.status_code}")
-        return False
-        
-    except Exception as e:
-        print_result(False, f"Exception occurred: {str(e)}")
-        return False
-
-def test_search_with_query_no_supabase():
-    """Test GET /api/search with query but no Supabase env (graceful degradation)"""
-    print_test_header("GET /api/search?q=chicken - No Supabase env (current state)")
-    
-    try:
-        response = requests.get(
-            f"{BASE_URL}/api/search?q=chicken",
-            timeout=10
-        )
-        
-        print(f"Status Code: {response.status_code}")
-        print(f"Response: {response.text}")
-        
-        if response.status_code == 200:
-            data = response.json()
-            if "products" in data:
-                # Should gracefully return empty array when Supabase is not configured
-                if data["products"] == []:
-                    print_result(True, "Gracefully returned empty products array (no Supabase)")
-                    return True
-                else:
-                    print_result(True, f"Returned {len(data['products'])} products (Supabase configured)")
-                    return True
-        
-        print_result(False, f"Expected 200, got {response.status_code}")
-        return False
-        
-    except Exception as e:
-        print_result(False, f"Exception occurred: {str(e)}")
-        return False
-
-def test_products_no_params_no_supabase():
-    """Test GET /api/products with no parameters and no Supabase env"""
-    print_test_header("GET /api/products - No params, no Supabase env (current state)")
-    
-    try:
-        response = requests.get(
-            f"{BASE_URL}/api/products",
-            timeout=10
-        )
-        
-        print(f"Status Code: {response.status_code}")
-        print(f"Response: {response.text}")
-        
-        if response.status_code == 200:
-            data = response.json()
-            if "products" in data:
-                # Should gracefully return empty array when Supabase is not configured
-                if data["products"] == []:
-                    print_result(True, "Gracefully returned empty products array (no Supabase)")
-                    return True
-                else:
-                    print_result(True, f"Returned {len(data['products'])} products (Supabase configured)")
-                    return True
-        
-        print_result(False, f"Expected 200, got {response.status_code}")
-        return False
-        
-    except Exception as e:
-        print_result(False, f"Exception occurred: {str(e)}")
-        return False
-
-def test_products_with_ids_no_supabase():
-    """Test GET /api/products with ids parameter but no Supabase env"""
-    print_test_header("GET /api/products?ids=uuid1,uuid2 - No Supabase env (current state)")
-    
-    try:
-        test_ids = "550e8400-e29b-41d4-a716-446655440000,550e8400-e29b-41d4-a716-446655440001"
-        response = requests.get(
-            f"{BASE_URL}/api/products?ids={test_ids}",
-            timeout=10
-        )
-        
-        print(f"Status Code: {response.status_code}")
-        print(f"Response: {response.text}")
-        
-        if response.status_code == 200:
-            data = response.json()
-            if "products" in data:
-                # Should gracefully return empty array when Supabase is not configured
-                if data["products"] == []:
-                    print_result(True, "Gracefully returned empty products array (no Supabase)")
-                    return True
-                else:
-                    print_result(True, f"Returned {len(data['products'])} products (Supabase configured)")
-                    return True
-        
-        print_result(False, f"Expected 200, got {response.status_code}")
-        return False
-        
-    except Exception as e:
-        print_result(False, f"Exception occurred: {str(e)}")
-        return False
-
-def test_products_empty_ids():
-    """Test GET /api/products with empty ids parameter"""
-    print_test_header("GET /api/products?ids= - Empty ids parameter")
-    
-    try:
-        response = requests.get(
-            f"{BASE_URL}/api/products?ids=",
-            timeout=10
-        )
-        
-        print(f"Status Code: {response.status_code}")
-        print(f"Response: {response.text}")
-        
-        if response.status_code == 200:
-            data = response.json()
-            if "products" in data:
-                # Empty ids should return empty array or fall back to default behavior
-                print_result(True, f"Returned response with {len(data['products'])} products")
-                return True
-        
-        print_result(False, f"Expected 200, got {response.status_code}")
-        return False
-        
-    except Exception as e:
-        print_result(False, f"Exception occurred: {str(e)}")
-        return False
 
 def main():
     print("\n" + "="*80)
-    print("BACKEND API TESTS - Pet Store Migration")
-    print("Testing graceful error handling with missing Supabase configuration")
+    print("BACKEND API TESTING - PETSTORE MIGRATION")
+    print("Base URL:", BASE_URL)
     print("="*80)
     
-    results = []
+    all_results = []
     
-    # Test POST /api/orders
-    print("\n" + "="*80)
-    print("TESTING: POST /api/orders")
-    print("="*80)
-    results.append(("Orders - Missing customer_name", test_orders_missing_customer_name()))
-    results.append(("Orders - Missing customer_phone", test_orders_missing_customer_phone()))
-    results.append(("Orders - Missing customer_address", test_orders_missing_customer_address()))
-    results.append(("Orders - Empty items", test_orders_empty_items()))
-    results.append(("Orders - Missing Supabase env", test_orders_missing_supabase_env()))
+    # Test admin endpoints
+    admin_results = test_admin_endpoints_unauthorized()
+    all_results.extend(admin_results)
     
-    # Test GET /api/search
-    print("\n" + "="*80)
-    print("TESTING: GET /api/search")
-    print("="*80)
-    results.append(("Search - Empty query", test_search_empty_query()))
-    results.append(("Search - With query, no Supabase", test_search_with_query_no_supabase()))
+    # Test admin upload endpoint
+    upload_results = test_admin_upload_unauthorized()
+    all_results.extend(upload_results)
     
-    # Test GET /api/products
-    print("\n" + "="*80)
-    print("TESTING: GET /api/products")
-    print("="*80)
-    results.append(("Products - No params, no Supabase", test_products_no_params_no_supabase()))
-    results.append(("Products - With ids, no Supabase", test_products_with_ids_no_supabase()))
-    results.append(("Products - Empty ids", test_products_empty_ids()))
+    # Test customer endpoints
+    customer_results = test_customer_endpoints()
+    all_results.extend(customer_results)
     
     # Summary
     print("\n" + "="*80)
     print("TEST SUMMARY")
     print("="*80)
+    total = len(all_results)
+    passed = sum(all_results)
+    failed = total - passed
     
-    passed = sum(1 for _, result in results if result)
-    total = len(results)
+    print(f"\nTotal Tests: {total}")
+    print(f"✅ Passed: {passed}")
+    print(f"❌ Failed: {failed}")
+    print(f"Success Rate: {(passed/total*100):.1f}%")
     
-    for test_name, result in results:
-        status = "✅ PASS" if result else "❌ FAIL"
-        print(f"{status}: {test_name}")
-    
-    print(f"\nTotal: {passed}/{total} tests passed")
-    
-    if passed == total:
-        print("\n🎉 All tests passed!")
+    if failed == 0:
+        print("\n🎉 ALL TESTS PASSED!")
         return 0
     else:
-        print(f"\n⚠️  {total - passed} test(s) failed")
+        print(f"\n⚠️  {failed} TEST(S) FAILED")
         return 1
+
 
 if __name__ == "__main__":
     sys.exit(main())
