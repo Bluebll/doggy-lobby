@@ -101,3 +101,64 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+backend:
+  - task: "POST /api/orders (WhatsApp order creation)"
+    implemented: true
+    working: true
+    file: "src/app/api/orders/route.ts"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Creates orders via service-role Supabase, re-prices from DB, returns order_number. Requires NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY in .env. Tables: orders, products (from supabase/migrations/0001_init_schema.sql)."
+        - working: true
+          agent: "testing"
+          comment: "✅ All validation tests passed: (1) Returns 400 'Missing customer details' when customer_name/phone/address missing, (2) Returns 400 'Cart is empty' when items array empty, (3) Returns 500 with clear error 'Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY' when Supabase env vars not configured. Request validation and error handling working correctly."
+  - task: "GET /api/search?q=... (live product search)"
+    implemented: true
+    working: true
+    file: "src/app/api/search/route.ts"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Returns up to 8 active products where name/description ILIKE %q%. Empty q returns []."
+        - working: true
+          agent: "testing"
+          comment: "✅ All tests passed: (1) Returns empty products array when query parameter is empty, (2) Gracefully returns empty products array when Supabase env is missing (no crash). Graceful degradation working as expected."
+  - task: "GET /api/products?ids=... (batch fetch for wishlist)"
+    implemented: true
+    working: true
+    file: "src/app/api/products/route.ts"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "If ids param provided (comma-separated), returns matching active products. Otherwise returns latest 48."
+        - working: true
+          agent: "testing"
+          comment: "✅ All tests passed: (1) Returns empty products array when no params and no Supabase env, (2) Returns empty products array when ids provided but no Supabase env, (3) Returns empty products array when ids parameter is empty. Graceful degradation working correctly."
+
+metadata:
+  created_by: "main_agent"
+  version: "1.0"
+  test_sequence: 2
+  run_ui: false
+
+test_plan:
+  current_focus: []
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+    - agent: "main"
+      message: "Please test the three new/updated Next.js API routes: /api/orders (POST), /api/search (GET), /api/products (GET). Note: The .env in this workspace does NOT have real Supabase keys set — user has not provided them yet. If Supabase env is missing, /api/search and /api/products should gracefully return {products: []}, and /api/orders should return a 500 with a clear error. Test both the missing-env behavior AND, if you can inject a dummy Supabase URL/key (safe fake values), validate the request/response shape (400 on missing fields, 400 on empty cart, correct JSON schema on success stub, etc.). Do not run the frontend."
+    - agent: "testing"
+      message: "✅ Backend testing complete - All 10 tests passed (10/10). Infrastructure issue fixed: Next.js service was in FATAL state due to missing node_modules after config change. Fixed by running 'yarn install --ignore-engines' and restarting service. Note: There's a Node.js version incompatibility (@supabase/supabase-js@2.112.0 requires Node >= 22, system has Node 20.20.2) but using --ignore-engines flag allows it to work. All three API routes tested successfully: POST /api/orders validates input correctly and returns appropriate errors, GET /api/search and GET /api/products both gracefully handle missing Supabase configuration by returning empty arrays. Ready for user to provide Supabase credentials for full functionality testing."

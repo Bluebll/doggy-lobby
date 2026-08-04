@@ -8,6 +8,7 @@ import { motion } from "framer-motion"
 import type { Product } from "@/types/domain"
 import { formatPrice } from "@/lib/constants"
 import AddToCartButton from "@/components/cart/AddToCartButton"
+import WishlistButton from "@/components/wishlist/WishlistButton"
 
 const FALLBACK_IMAGE =
   "https://images.unsplash.com/photo-1601758260908-9dd6c47ffbfe?q=80&w=800&auto=format&fit=crop"
@@ -45,6 +46,9 @@ function ProductCard({ product }: { product: Product }) {
               {tag}
             </div>
           )}
+          <div className="absolute top-4 right-4 z-20">
+            <WishlistButton product={product} />
+          </div>
 
           <img
             src={image}

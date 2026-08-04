@@ -5,6 +5,8 @@ import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
 import { Menu, X, Phone } from "lucide-react"
 import CartIcon from "@/components/cart/CartIcon"
+import WishlistIcon from "@/components/wishlist/WishlistIcon"
+import SearchBar from "@/components/search/SearchBar"
 
 const navLinks = [
   { name: "Shop", href: "#categories" },
@@ -63,13 +65,15 @@ export default function Navbar() {
           ))}
         </nav>
 
-        <div className="hidden md:flex items-center gap-6">
+        <div className="hidden md:flex items-center gap-4">
           <Link href="tel:+919876543210" className="flex items-center gap-2 hover:text-[var(--color-brand-orange)] transition-colors group">
             <div className="w-8 h-8 rounded-full bg-white/50 border border-white/60 shadow-sm flex items-center justify-center group-hover:bg-white transition-colors">
               <Phone size={14} className="text-black" />
             </div>
             <span className="text-sm font-bold text-black/80 group-hover:text-black">Call Us</span>
           </Link>
+          <SearchBar />
+          <WishlistIcon />
           <CartIcon />
           <Link href="#contact" className="interactive relative px-6 py-2.5 rounded-full text-sm font-bold text-white bg-black overflow-hidden group">
             <span className="relative z-10">Visit Store</span>
@@ -77,8 +81,9 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* Mobile: cart + menu */}
+        {/* Mobile: search + cart + menu */}
         <div className="flex md:hidden items-center gap-2">
+          <SearchBar />
           <CartIcon />
           <button aria-label="Toggle menu" aria-expanded={mobileMenuOpen} className="w-10 h-10 flex items-center justify-center bg-white/50 backdrop-blur-md rounded-full border border-white/60 focus-visible:ring-2 focus-visible:ring-black" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
             {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}

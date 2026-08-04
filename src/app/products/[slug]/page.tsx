@@ -5,6 +5,10 @@ import { getProductBySlug, getRelatedProducts } from "@/lib/queries/products"
 import { getSupabaseServer } from "@/lib/supabase/server"
 import { formatPrice } from "@/lib/constants"
 import AddToCartButton from "@/components/cart/AddToCartButton"
+import WishlistButton from "@/components/wishlist/WishlistButton"
+import ProductGallery from "@/components/products/ProductGallery"
+import TrackRecentlyViewed from "@/components/products/TrackRecentlyViewed"
+import RecentlyViewed from "@/components/products/RecentlyViewed"
 import type { Category, Product } from "@/types/domain"
 
 export const revalidate = 60
@@ -43,6 +47,7 @@ function RelatedCard({ product }: { product: Product }) {
       className="group flex flex-col bg-white rounded-[var(--radius-3xl)] overflow-hidden shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 border border-black/5"
     >
       <div className="relative aspect-square w-full overflow-hidden bg-gray-100">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={image} alt={product.name} loading="lazy" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
       </div>
       <div className="p-5">
@@ -90,6 +95,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   return (
     <section className="pt-32 md:pt-40 pb-24 bg-white min-h-screen">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <TrackRecentlyViewed product={product} />
 
       <div className="container mx-auto px-6">
         {/* Breadcrumb */}
@@ -111,30 +117,20 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
         </nav>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
-          {/* Gallery */}
-          <div>
-            <div className="relative aspect-square w-full overflow-hidden rounded-[var(--radius-3xl)] bg-[var(--color-brand-gray)]">
-              <img src={images[0]} alt={product.name} className="absolute inset-0 w-full h-full object-cover" />
-              {onOffer && (
-                <div className="absolute top-6 left-6 bg-[var(--color-brand-orange)] text-white px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider">
-                  {discountPct}% OFF
-                </div>
-              )}
-            </div>
-            {images.length > 1 && (
-              <div className="grid grid-cols-4 gap-3 mt-4">
-                {images.slice(0, 4).map((img, i) => (
-                  <div key={i} className="relative aspect-square rounded-xl overflow-hidden bg-[var(--color-brand-gray)]">
-                    <img src={img} alt={`${product.name} ${i + 1}`} className="absolute inset-0 w-full h-full object-cover" />
-                  </div>
-                ))}
+          <div className="relative">
+            <ProductGallery images={images} name={product.name} />
+            {onOffer && (
+              <div className="absolute top-6 left-6 z-10 bg-[var(--color-brand-orange)] text-white px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider">
+                {discountPct}% OFF
               </div>
             )}
           </div>
 
-          {/* Details */}
           <div className="flex flex-col">
-            <p className="text-[var(--color-brand-orange)] text-xs font-bold tracking-widest uppercase mb-3">{brand}</p>
+            <div className="flex items-start justify-between gap-4 mb-3">
+              <p className="text-[var(--color-brand-orange)] text-xs font-bold tracking-widest uppercase">{brand}</p>
+              <WishlistButton product={product} size="md" />
+            </div>
             <h1 className="font-heading text-3xl md:text-4xl lg:text-5xl font-extrabold text-black leading-tight mb-6">
               {product.name}
             </h1>
@@ -167,7 +163,6 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             <AddToCartButton product={product} />
             <p className="text-xs text-gray-400 mt-3">Tapping <b>Add to cart</b> opens your cart drawer. Checkout is sent via WhatsApp.</p>
 
-            {/* Trust bar */}
             <div className="grid grid-cols-3 gap-4 mt-10 pt-8 border-t border-gray-100">
               <div className="flex flex-col items-center text-center gap-2">
                 <Truck size={20} className="text-[var(--color-brand-orange)]" />
@@ -185,7 +180,6 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
           </div>
         </div>
 
-        {/* Related */}
         {related.length > 0 && (
           <div className="mt-24">
             <div className="flex items-center gap-4 mb-8">
@@ -199,6 +193,8 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             </div>
           </div>
         )}
+
+        <RecentlyViewed excludeId={product.id} />
       </div>
     </section>
   )
