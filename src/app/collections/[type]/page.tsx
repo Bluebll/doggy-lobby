@@ -1,5 +1,6 @@
 import { getSupabaseServer } from '@/lib/supabase/server'
 import Link from 'next/link'
+import BackButton from '@/components/ui/BackButton'
 
 const collectionNames: Record<string, string> = {
   'dogs': 'Dogs',
@@ -33,7 +34,7 @@ export default async function CollectionPage({ params }: { params: Promise<{ typ
   return (
     <div className="min-h-screen bg-white pt-40">
       <div className="p-8 max-w-6xl mx-auto">
-        <Link href="/" className="text-orange-600 mb-4 inline-block relative z-10 hover:underline">← Back Home</Link>
+        <BackButton />
         <h1 className="text-4xl font-bold mb-8">{collectionName}</h1>
         {!products || products.length === 0 ? (
           <p className="text-gray-600">No products in this collection yet.</p>
