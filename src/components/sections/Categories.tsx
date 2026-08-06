@@ -1,7 +1,6 @@
 "use client"
 
-import { useState } from "react"
-import { motion } from "framer-motion"
+
 
 const categories = [
   { name: "Dog Food", image: "https://images.unsplash.com/photo-1587300411515-2f66f43a3117?w=500&h=600&fit=crop", color: "from-blue-500/60" },
@@ -11,14 +10,8 @@ const categories = [
 ]
 
 function CategoryCard({ category }: { category: typeof categories[0] }) {
-  const [isHovered, setIsHovered] = useState(false)
-
   return (
-    <div
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      className="relative aspect-square rounded-2xl overflow-hidden group cursor-pointer"
-    >
+    <div className="relative aspect-square rounded-2xl overflow-hidden group cursor-pointer">
       <img 
         src={category.image} 
         alt={category.name}

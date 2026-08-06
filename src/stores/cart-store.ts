@@ -13,6 +13,7 @@ interface CartStore {
   items: CartItem[]
   addToCart: (item: CartItem) => void
   removeFromCart: (id: number) => void
+  decreaseQuantity: (id: number) => void
   clearCart: () => void
 }
 
@@ -36,6 +37,22 @@ export const useCart = create<CartStore>()(
         set((state) => ({
           items: state.items.filter((i) => i.id !== id),
         })),
+      decreaseQuantity: (id) =>
+        set((state) => {
+          const existing = state.items.find((i) => i.id === id)
+          if (existing && existing.quantity > 1) {
+            return {
+              items: state.items.map((i) =>
+                i.id === id ? { ...i, quantity: i.quantity - 1 } : i
+              ),
+            }
+          } else if (existing && existing.quantity === 1) {
+            return {
+              items: state.items.filter((i) => i.id !== id),
+            }
+          }
+          return { items: state.items }
+        }),
       clearCart: () => set({ items: [] }),
     }),
     { name: 'cart-store' }

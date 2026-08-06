@@ -1,6 +1,16 @@
 import { getSupabaseServer } from '@/lib/supabase/server'
 
-export async function queryProducts(filter: any = {}) {
+export interface Product {
+  id: number;
+  slug: string;
+  name: string;
+  description: string | null;
+  price: number;
+  stock: number;
+  image_urls: string[] | null;
+}
+
+export async function queryProducts(filter: { q?: string } = {}) {
   const supabase = await getSupabaseServer()
   if (!supabase) return []
   
@@ -11,7 +21,7 @@ export async function queryProducts(filter: any = {}) {
     q = q.or(`name.ilike.${like},description.ilike.${like}`)
   }
   
-  const { data, error } = await q.limit(48)
+  const { data, error } = await q.limit(48).returns<Product[]>()
   if (error) return []
   return data || []
 }
@@ -25,6 +35,7 @@ export async function getProductBySlug(slug: string) {
     .select('*')
     .eq('slug', slug)
     .eq('is_active', true)
+    .returns<Product[]>()
     .maybeSingle()
   
   if (error) return null

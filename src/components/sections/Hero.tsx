@@ -63,7 +63,7 @@ export default function Hero() {
 
       <div className="container mx-auto px-6 md:px-12 relative z-10 flex flex-col items-center md:items-start text-center md:text-left pt-32 md:pt-24 mt-10">
         
-        <h1 className="font-heading text-5xl sm:text-6xl md:text-7xl lg:text-[6.5rem] font-extrabold text-white leading-[1.1] md:leading-[1.05] mb-6 max-w-5xl flex flex-wrap justify-center md:justify-start">
+        <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[6.5rem] font-extrabold text-white leading-[1.1] md:leading-[1.05] mb-6 max-w-5xl flex flex-wrap justify-center md:justify-start">
           {words.map((word, i) => (
             <motion.span
               key={i}

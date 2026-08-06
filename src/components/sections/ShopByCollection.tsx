@@ -3,16 +3,16 @@
 import { useRouter } from 'next/navigation'
 
 const collections = [
-  { name: 'Dogs', emoji: '🐶', image: 'https://images.unsplash.com/photo-1633722715463-d30628519d70?w=500', type: 'dogs' },
+  { name: 'Dogs', emoji: '🐶', image: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?q=80&w=800&auto=format&fit=crop', type: 'dogs' },
   { name: 'Cats', emoji: '🐱', image: 'https://images.unsplash.com/photo-1574158622682-e40e69881006?w=500', type: 'cats' },
   { name: 'Puppies', emoji: '🐶', image: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=500', type: 'puppies' },
-  { name: 'Kittens', emoji: '🐱', image: 'https://images.unsplash.com/photo-1574158622682-e40e69881006?w=500', type: 'kittens' },
+  { name: 'Kittens', emoji: '🐱', image: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=800&auto=format&fit=crop', type: 'kittens' },
 ]
 
 export default function ShopByCollection() {
   const router = useRouter()
   return (
-    <div className="py-20 px-4">
+    <div className="pt-32 pb-20 px-4">
       <h2 className="text-4xl font-bold text-center mb-12">Shop by Collection</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
         {collections.map((col) => (
