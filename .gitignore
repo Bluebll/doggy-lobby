@@ -16,8 +16,6 @@ x# See https://help.github.com/articles/ignoring-files/ for more about ignoring 
 
 # next.js
 # Playwright
-playwright-report/
-test-results/
 
 # Database/local files
 schema.json
@@ -47,3 +45,5 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+/playwright-report/
+/test-results/
