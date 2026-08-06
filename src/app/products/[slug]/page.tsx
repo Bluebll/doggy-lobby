@@ -2,6 +2,7 @@
 
 import { use, useEffect, useState } from 'react'
 import Link from 'next/link'
+import { toast } from 'sonner'
 import { useCart } from '@/stores/cart-store'
 import type { Product } from '@/lib/queries/products'
 
@@ -43,7 +44,7 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
         <p className="text-sm text-gray-500 mb-8">{product.stock} in stock</p>
         <button onClick={() => {
           addToCart({ id: product.id, name: product.name, price: product.price, image: product.image_urls?.[0] || '', quantity: 1 })
-          alert('Added to cart!')
+          toast.success('Added to cart')
         }} className="bg-orange-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-orange-700 w-full">
           Add to Cart
         </button>

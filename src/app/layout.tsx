@@ -8,6 +8,7 @@ import MobileBottomNav from "@/components/layout/MobileBottomNav";
 import { CustomCursor, AmbientBackground, NoiseOverlay } from "@/components/ui/GlobalEffects";
 import { CursorProvider } from "@/components/ui/CursorProvider";
 import CartDrawer from "@/components/cart/CartDrawer";
+import { Toaster } from "sonner";
 
 const manrope = Manrope({
   variable: "--font-manrope",
@@ -118,6 +119,7 @@ export default function RootLayout({
             <MobileBottomNav />
           </SmoothScroll>
           <CartDrawer />
+          <Toaster position="top-right" duration={2500} />
         </CursorProvider>
       </body>
     </html>
