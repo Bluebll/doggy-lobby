@@ -9,7 +9,7 @@ import CartIcon from "@/components/cart/CartIcon"
 import ProductSearch from "@/components/layout/ProductSearch"
 
 const navLinks = [
-  { name: "Shop", href: "#categories" },
+  { name: "Shop", href: "#collections" },
   { name: "Our Story", href: "#about" },
   { name: "Gallery", href: "#gallery" },
   { name: "FAQ", href: "#faq" },

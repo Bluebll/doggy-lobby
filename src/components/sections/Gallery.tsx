@@ -29,7 +29,7 @@ const images = [
 
 export default function Gallery() {
   return (
-    <section className="py-32 md:py-40 bg-[#0a0a0a] relative overflow-hidden">
+    <section id="gallery" className="py-32 md:py-40 bg-[#0a0a0a] relative overflow-hidden">
       
       {/* Subtle ambient lighting */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-[var(--color-brand-orange)]/5 blur-[150px] rounded-full pointer-events-none -translate-y-1/2 z-0"></div>
