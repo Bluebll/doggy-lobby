@@ -56,7 +56,7 @@ export default function Contact() {
   }, [])
 
   return (
-    <section id="contact" ref={sectionRef} className="relative h-[900px] md:h-screen min-h-[800px] bg-black overflow-hidden z-20">
+    <section id="contact" ref={sectionRef} className="relative min-h-screen h-auto md:h-screen md:min-h-[800px] bg-black overflow-hidden z-20 py-24 md:py-0">
       
       {/* Background Map & Reveal Mask */}
       <div className="absolute inset-0 z-0">
@@ -72,15 +72,15 @@ export default function Contact() {
       </div>
 
       {/* Smooth Transition Overlays & Ambience */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent z-0"></div>
-      <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-[#0a0a0a]/30 z-0"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-black/90 md:from-black via-black/80 md:via-black/70 to-transparent z-0"></div>
+      <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/50 md:via-transparent to-[#0a0a0a]/30 z-0"></div>
       
       {/* Subtle Brand Ambience */}
       <div className="absolute top-[20%] left-[-10%] w-[800px] h-[800px] bg-[var(--color-brand-orange)]/5 blur-[120px] rounded-full pointer-events-none z-0"></div>
 
       <div className="container mx-auto px-6 md:px-12 h-full flex items-center relative z-10 pt-20 md:pt-0">
         
-        <div ref={cardRef} className="bg-black/40 backdrop-blur-2xl p-6 md:p-8 rounded-[var(--radius-3xl)] max-w-sm w-full relative overflow-hidden shadow-2xl border border-white/10" style={{ transformStyle: "preserve-3d" }}>
+        <div ref={cardRef} className="bg-black/60 md:bg-black/40 backdrop-blur-2xl p-6 md:p-8 rounded-[var(--radius-3xl)] max-w-sm w-full relative overflow-hidden shadow-2xl border border-white/10" style={{ transformStyle: "preserve-3d" }}>
           {/* Internal Glow */}
           <div className="absolute -top-[20%] -right-[20%] w-[250px] h-[250px] bg-[var(--color-brand-orange)] opacity-[0.15] blur-[80px] rounded-full pointer-events-none"></div>
 

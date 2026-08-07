@@ -24,7 +24,7 @@ export default function Hero() {
   const words = headline.split(" ")
 
   return (
-    <section ref={containerRef} className="relative h-screen min-h-[800px] flex items-center justify-center overflow-hidden bg-black">
+    <section ref={containerRef} className="relative min-h-screen h-auto md:h-screen md:min-h-[800px] flex items-center justify-center overflow-hidden bg-black py-24 md:py-0">
       {/* Background Lighting */}
       <div className="absolute top-1/4 left-1/4 w-[40vw] h-[40vw] bg-[var(--color-brand-orange)]/10 rounded-full blur-[100px] mix-blend-screen pointer-events-none will-change-transform"></div>
       
@@ -38,9 +38,9 @@ export default function Hero() {
           alt="Happy dogs"
           className="w-full h-[120%] object-cover object-center absolute top-[-10%] opacity-80"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-black/40 to-black/10"></div>
-        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/30 to-transparent"></div>
-        <div className="absolute inset-0 bg-black/10 backdrop-brightness-90"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-black/60 md:via-black/40 to-black/10"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-black/90 md:from-black/80 via-black/60 md:via-black/30 to-transparent"></div>
+        <div className="absolute inset-0 bg-black/40 md:bg-black/10 backdrop-brightness-90"></div>
       </div>
 
       {/* Floating Glass Card (Rating) */}
