@@ -65,14 +65,36 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
         )}
         <h1 className="text-4xl font-bold mb-4">{product.name}</h1>
         <p className="text-2xl text-orange-600 font-bold mb-4">₹{product.price}</p>
-        <p className="text-gray-600 mb-4">{product.description}</p>
-        <p className="text-sm text-gray-500 mb-8">{product.stock} in stock</p>
+        <p className="text-gray-600 mb-6">{product.description}</p>
+        
+        <div className="mb-6 space-y-2 text-sm text-gray-700">
+          <p className="flex items-center"><span className="text-green-500 mr-2 font-bold">✓</span> Ultra-soft premium fabric</p>
+          <p className="flex items-center"><span className="text-green-500 mr-2 font-bold">✓</span> Comfortable cushioning</p>
+          <p className="flex items-center"><span className="text-green-500 mr-2 font-bold">✓</span> Perfect for puppies and small dogs</p>
+          <p className="flex items-center"><span className="text-green-500 mr-2 font-bold">✓</span> Easy to clean</p>
+          <p className="flex items-center"><span className="text-green-500 mr-2 font-bold">✓</span> Durable everyday design</p>
+        </div>
+
+        <p className="text-sm text-gray-500 mb-6">{product.stock} in stock</p>
+        
         <button onClick={() => {
           addToCart({ id: product.id, name: product.name, price: product.price, image: product.image_urls?.[0] || '', quantity: 1 })
           toast.success('Added to cart')
-        }} className="bg-orange-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-orange-700 w-full">
+        }} className="bg-orange-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-orange-700 w-full transition-colors shadow-sm">
           Add to Cart
         </button>
+
+        <div className="mt-6 flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center text-sm text-gray-600 border-t border-gray-100 pt-6">
+          <div className="flex items-center gap-2 justify-center">
+            <span>🚚</span> Free delivery in 3-5 days
+          </div>
+          <div className="flex items-center gap-2 justify-center">
+            <span>↩</span> Easy returns
+          </div>
+          <div className="flex items-center gap-2 justify-center">
+            <span>🔒</span> Secure payment
+          </div>
+        </div>
       </div>
     </div>
   )
