@@ -160,15 +160,14 @@ export default function ProductForm({ product, isEdit }: { product?: Product, is
             <label className="block text-sm font-semibold text-gray-700 mb-2">Collection</label>
             <select
               name="collection"
-              defaultValue={product?.collection || "toys"}
+              defaultValue={product?.collection || "dogs"}
               required
               className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-black focus:border-black outline-none transition-all text-black bg-white"
             >
-              <option value="toys">Toys</option>
-              <option value="food">Food</option>
-              <option value="accessories">Accessories</option>
-              <option value="grooming">Grooming</option>
-              <option value="beds">Beds</option>
+              <option value="dogs">Dogs</option>
+              <option value="cats">Cats</option>
+              <option value="puppies">Puppies</option>
+              <option value="kittens">Kittens</option>
             </select>
           </div>
 
