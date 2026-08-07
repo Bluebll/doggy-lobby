@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { MapPin, Phone, Mail, ArrowUpRight, Star, Send } from "lucide-react"
+import { MapPin, Phone, Mail, ArrowUpRight, Star } from "lucide-react"
 
 const igPosts = [
   "https://images.unsplash.com/photo-1544568100-847a948585b9?q=80&w=300&auto=format&fit=crop",
@@ -27,21 +27,25 @@ export default function Footer() {
         {/* Top Section: Newsletter & IG */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 mb-24 pb-24 border-b border-white/10">
           <div>
-            <h3 className="font-heading text-4xl md:text-5xl font-extrabold mb-4">Join the Club.</h3>
-            <p className="text-[#a1a1aa] mb-8 max-w-md text-lg leading-relaxed">
-              Subscribe for exclusive offers, premium pet care tips, and early access to new collections.
-            </p>
-            <form className="flex gap-2 max-w-md">
-              <input 
-                type="email" 
-                placeholder="Enter your email" 
-                className="w-full bg-white/5 border border-white/10 rounded-full px-6 py-4 text-white placeholder-white/40 focus:outline-none focus:border-[var(--color-brand-orange)] transition-colors"
-                required
-              />
-              <button type="submit" className="interactive bg-white text-black px-6 rounded-full flex items-center justify-center hover:bg-[var(--color-brand-orange)] hover:text-white transition-colors">
-                <Send size={18} />
-              </button>
-            </form>
+            <h3 className="font-heading text-4xl md:text-5xl font-extrabold mb-8">Why Choose DoggyLobby?</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-8">
+              <div>
+                <h4 className="font-bold text-white text-lg mb-1 flex items-center gap-2"><span>🐾</span> Premium Pet Products</h4>
+                <p className="text-[#a1a1aa] text-sm leading-relaxed">Carefully selected products designed for your furry companions.</p>
+              </div>
+              <div>
+                <h4 className="font-bold text-white text-lg mb-1 flex items-center gap-2"><span>🚚</span> Reliable Delivery</h4>
+                <p className="text-[#a1a1aa] text-sm leading-relaxed">Get your pet essentials delivered safely and conveniently.</p>
+              </div>
+              <div>
+                <h4 className="font-bold text-white text-lg mb-1 flex items-center gap-2"><span>💬</span> Customer Support</h4>
+                <p className="text-[#a1a1aa] text-sm leading-relaxed">Need help choosing the right product? We are here to assist.</p>
+              </div>
+              <div>
+                <h4 className="font-bold text-white text-lg mb-1 flex items-center gap-2"><span>❤️</span> Pet-First Experience</h4>
+                <p className="text-[#a1a1aa] text-sm leading-relaxed">A store built around making pet care simple and enjoyable.</p>
+              </div>
+            </div>
           </div>
 
           <div>
