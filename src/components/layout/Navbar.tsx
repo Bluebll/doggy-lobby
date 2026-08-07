@@ -5,6 +5,7 @@ import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
 import { Menu, X, Phone } from "lucide-react"
 import CartIcon from "@/components/cart/CartIcon"
+import ProductSearch from "@/components/layout/ProductSearch"
 
 const navLinks = [
   { name: "Shop", href: "#categories" },
@@ -64,6 +65,7 @@ export default function Navbar() {
         </nav>
 
         <div className="hidden lg:flex items-center gap-6 max-lg:hidden">
+          <ProductSearch className="w-48 lg:w-64" />
           <Link href="tel:+919876543210" className="flex items-center gap-2 hover:text-[var(--color-brand-orange)] transition-colors group">
             <div className="w-8 h-8 rounded-full bg-white/50 border border-white/60 shadow-sm flex items-center justify-center group-hover:bg-white transition-colors">
               <Phone size={14} className="text-black" />
@@ -95,6 +97,9 @@ export default function Navbar() {
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
             className="absolute top-[calc(100%+1rem)] left-4 right-4 glass-card bg-white/80 rounded-3xl flex flex-col p-6 gap-2 lg:hidden"
           >
+            <div className="mb-2">
+              <ProductSearch className="w-full" />
+            </div>
             {navLinks.map((link, i) => (
               <motion.div
                 key={link.name}
