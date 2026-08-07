@@ -39,7 +39,7 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden lg:flex items-center gap-2 p-1.5 rounded-full bg-white/40 backdrop-blur-md border border-white/40 shadow-sm">
+        <nav className="hidden lg:flex items-center gap-2 p-1.5 rounded-full bg-white/40 backdrop-blur-md border border-white/40 shadow-sm max-lg:hidden">
           {navLinks.map((link) => (
             <Link
               key={link.name}
@@ -63,7 +63,7 @@ export default function Navbar() {
           ))}
         </nav>
 
-        <div className="hidden lg:flex items-center gap-6">
+        <div className="hidden lg:flex items-center gap-6 max-lg:hidden">
           <Link href="tel:+919876543210" className="flex items-center gap-2 hover:text-[var(--color-brand-orange)] transition-colors group">
             <div className="w-8 h-8 rounded-full bg-white/50 border border-white/60 shadow-sm flex items-center justify-center group-hover:bg-white transition-colors">
               <Phone size={14} className="text-black" />
@@ -77,9 +77,8 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* Mobile: cart + menu */}
+        {/* Mobile: menu button only */}
         <div className="flex lg:hidden items-center gap-2">
-          <CartIcon />
           <button aria-label="Toggle menu" aria-expanded={mobileMenuOpen} className="w-10 h-10 flex items-center justify-center bg-white/50 backdrop-blur-md rounded-full border border-white/60 focus-visible:ring-2 focus-visible:ring-black" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
             {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
