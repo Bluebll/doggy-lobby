@@ -88,6 +88,11 @@ export default function Navbar() {
         </div>
       </div>
 
+      {/* Mobile Search Row */}
+      <div className="lg:hidden container mx-auto px-6 md:px-12 mt-4">
+        <ProductSearch className="w-full" />
+      </div>
+
       {/* Mobile Nav */}
       <AnimatePresence>
         {mobileMenuOpen && (
@@ -98,9 +103,6 @@ export default function Navbar() {
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
             className="absolute top-[calc(100%+1rem)] left-4 right-4 glass-card bg-white/80 rounded-3xl flex flex-col p-6 gap-2 lg:hidden"
           >
-            <div className="mb-2">
-              <ProductSearch className="w-full" />
-            </div>
             {navLinks.map((link, i) => (
               <motion.div
                 key={link.name}
