@@ -4,6 +4,7 @@ import { use, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { toast } from 'sonner'
 import { useCart } from '@/stores/cart-store'
+import { createClient } from '@supabase/supabase-js'
 import type { Product } from '@/lib/queries/products'
 
 export default function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -11,6 +12,7 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
   const [product, setProduct] = useState<Product | null>(null)
   const [loading, setLoading] = useState(true)
   const [selectedImageIdx, setSelectedImageIdx] = useState(0)
+  const [relatedProducts, setRelatedProducts] = useState<Product[]>([])
   const addToCart = useCart((state) => state.addToCart)
 
   useEffect(() => {
@@ -20,6 +22,42 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
         const data = await res.json()
         setProduct(data)
         setSelectedImageIdx(0)
+
+        if (data && data.id) {
+          const supabase = createClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+          )
+          
+          let relatedData: Product[] = []
+          const coll = data.collection || ''
+          
+          const { data: sameCollection } = await supabase
+            .from('products')
+            .select('*')
+            .eq('is_active', true)
+            .eq('collection', coll)
+            .neq('id', data.id)
+            .limit(4)
+            
+          relatedData = sameCollection || []
+          
+          if (relatedData.length < 4) {
+            const { data: fallback } = await supabase
+              .from('products')
+              .select('*')
+              .eq('is_active', true)
+              .neq('id', data.id)
+              .neq('collection', coll)
+              .limit(4 - relatedData.length)
+              
+            if (fallback) {
+              relatedData = [...relatedData, ...fallback]
+            }
+          }
+          
+          setRelatedProducts(relatedData)
+        }
       } catch (err) {
         console.error('Error:', err)
       }
@@ -95,6 +133,28 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
             <span>🔒</span> Secure payment
           </div>
         </div>
+
+        {/* Related Products */}
+        {relatedProducts.length > 0 && (
+          <div className="mt-16 border-t border-gray-100 pt-12">
+            <h2 className="text-2xl font-bold mb-6 text-gray-900">You might also like</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
+              {relatedProducts.map((p) => (
+                <Link key={p.id} href={`/products/${p.slug}`} className="group block">
+                  <div className="bg-gray-100 rounded-2xl overflow-hidden aspect-square mb-4 relative">
+                    {p.image_urls?.[0] ? (
+                      <img src={p.image_urls[0]} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-gray-400">No image</div>
+                    )}
+                  </div>
+                  <h3 className="font-bold text-gray-900 group-hover:text-orange-600 transition-colors truncate text-sm sm:text-base">{p.name}</h3>
+                  <p className="text-orange-600 font-semibold mt-1 text-sm sm:text-base">₹{p.price}</p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
