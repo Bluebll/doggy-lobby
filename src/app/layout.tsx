@@ -53,44 +53,66 @@ export const metadata: Metadata = {
   }
 };
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "PetStore",
-  "name": "Doggy Lobby",
-  "image": "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?q=80&w=1200&auto=format&fit=crop",
-  "@id": "https://doggylobby.in",
-  "url": "https://doggylobby.in",
-  "telephone": "+919876543210",
-  "priceRange": "$$$",
-  "address": {
-    "@type": "PostalAddress",
-    "streetAddress": "Sector 15 Market",
-    "addressLocality": "Faridabad",
-    "addressRegion": "Haryana",
-    "postalCode": "121007",
-    "addressCountry": "IN"
+const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "PetStore",
+    "name": "Doggy Lobby - Greenfields",
+    "image": "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?q=80&w=1200&auto=format&fit=crop",
+    "@id": "https://doggylobby.in#greenfields",
+    "url": "https://doggylobby.in",
+    "telephone": "+919876543210",
+    "priceRange": "$$$",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "2467 Street No 12, Greenfields",
+      "addressLocality": "Faridabad",
+      "addressRegion": "Haryana",
+      "postalCode": "121010",
+      "addressCountry": "IN"
+    },
+    "openingHoursSpecification": [{
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      "opens": "10:00",
+      "closes": "21:00"
+    },{
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Saturday", "Sunday"],
+      "opens": "09:00",
+      "closes": "22:00"
+    }]
   },
-  "geo": {
-    "@type": "GeoCoordinates",
-    "latitude": 28.3974,
-    "longitude": 77.3195
-  },
-  "openingHoursSpecification": [{
-    "@type": "OpeningHoursSpecification",
-    "dayOfWeek": [
-      "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"
-    ],
-    "opens": "10:00",
-    "closes": "21:00"
-  },{
-    "@type": "OpeningHoursSpecification",
-    "dayOfWeek": [
-      "Saturday", "Sunday"
-    ],
-    "opens": "09:00",
-    "closes": "22:00"
-  }]
-};
+  {
+    "@context": "https://schema.org",
+    "@type": "PetStore",
+    "name": "Doggy Lobby - Charmwood Branch",
+    "image": "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?q=80&w=1200&auto=format&fit=crop",
+    "@id": "https://doggylobby.in#charmwood",
+    "url": "https://doggylobby.in",
+    "telephone": "+919876543210",
+    "priceRange": "$$$",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Charmwood, Eros Indian Oil, Ibiza Town, Shiv Durga Vihar",
+      "addressLocality": "Faridabad",
+      "addressRegion": "Haryana",
+      "postalCode": "121009",
+      "addressCountry": "IN"
+    },
+    "openingHoursSpecification": [{
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      "opens": "10:00",
+      "closes": "21:00"
+    },{
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Saturday", "Sunday"],
+      "opens": "09:00",
+      "closes": "22:00"
+    }]
+  }
+];
 
 export default function RootLayout({
   children,

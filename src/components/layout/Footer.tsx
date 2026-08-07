@@ -108,7 +108,7 @@ export default function Footer() {
             <ul className="space-y-5 text-[#a1a1aa]">
               <li className="flex items-start gap-3 group cursor-pointer">
                 <MapPin size={20} className="text-[#a1a1aa] group-hover:text-[var(--color-brand-orange)] transition-colors shrink-0" />
-                <span className="group-hover:text-white transition-colors">Sector 15 Market,<br />Faridabad, HR 121007</span>
+                <span className="group-hover:text-white transition-colors">2467 Street No 12, Greenfields,<br />Faridabad, HR 121010</span>
               </li>
               <li className="flex items-center gap-3 group cursor-pointer">
                 <Phone size={20} className="text-[#a1a1aa] group-hover:text-[var(--color-brand-orange)] transition-colors shrink-0" />

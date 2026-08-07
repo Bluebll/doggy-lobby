@@ -5,56 +5,19 @@ import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { motion } from "framer-motion"
 import { ShoppingBag } from "lucide-react"
+import { getSupabaseServer } from "@/lib/supabase/server"
 
-const products = [
-  { 
-    name: "Premium Wagyu Dog Treats", 
-    brand: "Hokkaido Farms",
-    desc: "Air-dried to preserve raw nutrients and rich flavor.",
-    price: "₹1,299", 
-    image: "https://images.unsplash.com/photo-1582798358481-d199fb7347bb?q=80&w=800&auto=format&fit=crop", 
-    tag: "Bestseller", 
-    category: "Treats" 
-  },
-  { 
-    name: "Orthopedic Memory Foam Bed", 
-    brand: "SleepyPaws",
-    desc: "Engineered for joint relief and deep REM sleep.",
-    price: "₹4,499", 
-    image: "https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?q=80&w=800&auto=format&fit=crop", 
-    tag: "New", 
-    category: "Beds" 
-  },
-  { 
-    name: "Grain-Free Salmon Feast", 
-    brand: "WildCatch",
-    desc: "Rich in Omega-3s for a glowing, healthy coat.",
-    price: "₹2,199", 
-    image: "https://images.unsplash.com/photo-1584362917165-526a968579e8?q=80&w=800&auto=format&fit=crop", 
-    tag: "", 
-    category: "Food" 
-  },
-  { 
-    name: "Indestructible Chew Toy", 
-    brand: "ToughBite",
-    desc: "Medical-grade rubber that withstands the toughest jaws.",
-    price: "₹899", 
-    image: "https://images.unsplash.com/photo-1576201836106-db1758fd1c97?q=80&w=800&auto=format&fit=crop", 
-    tag: "", 
-    category: "Toys" 
-  },
-  { 
-    name: "Ceramic Slow Feeder Bowl", 
-    brand: "ZenPet",
-    desc: "Promotes healthy digestion and prevents bloating.",
-    price: "₹1,499", 
-    image: "https://images.unsplash.com/photo-1623387641177-e8a49c0b471c?q=80&w=800&auto=format&fit=crop", 
-    tag: "Trending", 
-    category: "Accessories" 
-  },
-]
+type Product = {
+  name: string;
+  brand: string;
+  desc: string;
+  price: string;
+  image: string;
+  tag: string;
+  category: string;
+};
 
-function ProductCard({ product }: { product: typeof products[0] }) {
+function ProductCard({ product }: { product: Product }) {
   const [isHovered, setIsHovered] = useState(false)
   
   return (
@@ -113,6 +76,39 @@ function ProductCard({ product }: { product: typeof products[0] }) {
 export default function FeaturedProducts() {
   const containerRef = useRef<HTMLDivElement>(null)
   const textRef = useRef<HTMLDivElement>(null)
+  const [displayProducts, setDisplayProducts] = useState<Product[]>([])
+
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        const supabase = await getSupabaseServer()
+        if (supabase) {
+          const { data } = await supabase.from('products').select('id, name, description, price, image_urls, is_active').eq('is_active', true)
+          if (data && data.length > 0) {
+            setDisplayProducts(data.map((p: {
+              id: string;
+              name: string;
+              description: string | null;
+              price: number | string;
+              image_urls: string[] | null;
+              is_active: boolean;
+            }) => ({
+              name: p.name,
+              brand: "Doggy Lobby",
+              desc: p.description || "",
+              price: `₹${p.price}`,
+              image: p.image_urls?.[0] || "",
+              tag: "",
+              category: "Products"
+            })))
+          }
+        }
+      } catch (err) {
+        console.error(err)
+      }
+    }
+    fetchProducts()
+  }, [])
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger)
@@ -152,15 +148,21 @@ export default function FeaturedProducts() {
 
       {/* Native Horizontal Scroll Carousel */}
       <div className="w-full pl-6 md:pl-12">
-        <div 
-          className="flex gap-6 md:gap-8 overflow-x-auto snap-x snap-mandatory pb-16 pr-6 md:pr-12 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] cursor-grab active:cursor-grabbing"
-        >
-          {products.map((product, idx) => (
-            <div key={idx} className="snap-center md:snap-start shrink-0">
-              <ProductCard product={product} />
-            </div>
-          ))}
-        </div>
+        {displayProducts.length === 0 ? (
+          <div className="pb-16 pr-6 md:pr-12 text-gray-500 font-medium">
+            No featured products available at the moment. Check back soon!
+          </div>
+        ) : (
+          <div 
+            className="flex gap-6 md:gap-8 overflow-x-auto snap-x snap-mandatory pb-16 pr-6 md:pr-12 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] cursor-grab active:cursor-grabbing"
+          >
+            {displayProducts.map((product, idx) => (
+              <div key={idx} className="snap-center md:snap-start shrink-0">
+                <ProductCard product={product} />
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   )

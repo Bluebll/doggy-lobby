@@ -93,10 +93,12 @@ export default function Hero() {
           className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-center w-full sm:w-auto mb-16"
         >
           <div onMouseEnter={() => handleMouseEnter("Visit", "visit")} onMouseLeave={handleMouseLeave} className="w-full sm:w-auto">
-            <MagneticButton href="#contact" className="group w-full sm:w-auto bg-[var(--color-brand-orange)] text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-[var(--color-brand-orange-hover)] shadow-lg justify-center">
-              Visit Store
-              <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-            </MagneticButton>
+            <a href="https://maps.app.goo.gl/dffERvGwauzXstLk6?g_st=ic" target="_blank" rel="noreferrer" className="block w-full sm:w-auto">
+              <MagneticButton className="group w-full sm:w-auto bg-[var(--color-brand-orange)] text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-[var(--color-brand-orange-hover)] shadow-lg justify-center">
+                Visit Store
+                <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+              </MagneticButton>
+            </a>
           </div>
           
           <div onMouseEnter={() => handleMouseEnter("Chat", "visit")} onMouseLeave={handleMouseLeave} className="w-full sm:w-auto">
@@ -131,7 +133,7 @@ export default function Hero() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.5, duration: 1 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 z-10"
+        className="absolute bottom-2 md:bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 z-10 pointer-events-none"
       >
         <span className="text-white/50 text-[10px] font-bold uppercase tracking-widest">Scroll</span>
         <div className="w-[1px] h-12 bg-white/20 relative overflow-hidden">
