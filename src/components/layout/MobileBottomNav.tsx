@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
 import { Phone, MessageCircle, Navigation, MapPin } from "lucide-react"
+import { WHATSAPP_NUMBER } from "@/lib/constants"
 
 export default function MobileBottomNav() {
   const [isVisible, setIsVisible] = useState(true)
@@ -41,12 +42,12 @@ export default function MobileBottomNav() {
         >
           <div className="glass-card bg-white/90 backdrop-blur-xl rounded-full px-6 py-4 flex items-center justify-between shadow-[0_20px_40px_rgba(0,0,0,0.1)] border border-white">
             
-            <Link href="tel:+919876543210" aria-label="Call Store" className="flex flex-col items-center gap-1 text-black/60 hover:text-[var(--color-brand-orange)] transition-colors">
+            <Link href={`tel:+${WHATSAPP_NUMBER}`} aria-label="Call Store" className="flex flex-col items-center gap-1 text-black/60 hover:text-[var(--color-brand-orange)] transition-colors">
               <Phone size={20} aria-hidden="true" />
               <span className="text-[10px] font-bold uppercase tracking-wider">Call</span>
             </Link>
 
-            <Link href="https://wa.me/919876543210" aria-label="Chat on WhatsApp" className="flex flex-col items-center gap-1 text-black/60 hover:text-[#25D366] transition-colors relative">
+            <Link href={`https://wa.me/${WHATSAPP_NUMBER}`} aria-label="Chat on WhatsApp" className="flex flex-col items-center gap-1 text-black/60 hover:text-[#25D366] transition-colors relative">
               <MessageCircle size={20} aria-hidden="true" />
               <span className="text-[10px] font-bold uppercase tracking-wider">Chat</span>
               <span className="absolute -top-1 -right-1 w-2 h-2 bg-[#25D366] rounded-full animate-ping"></span>

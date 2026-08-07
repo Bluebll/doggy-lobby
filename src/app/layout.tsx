@@ -9,6 +9,7 @@ import { CustomCursor, AmbientBackground, NoiseOverlay } from "@/components/ui/G
 import { CursorProvider } from "@/components/ui/CursorProvider";
 import CartDrawer from "@/components/cart/CartDrawer";
 import { Toaster } from "sonner";
+import { WHATSAPP_NUMBER } from "@/lib/constants";
 
 const manrope = Manrope({
   variable: "--font-manrope",
@@ -61,7 +62,7 @@ const jsonLd = [
     "image": "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?q=80&w=1200&auto=format&fit=crop",
     "@id": "https://doggylobby.in#greenfields",
     "url": "https://doggylobby.in",
-    "telephone": "+919876543210",
+    "telephone": `+${WHATSAPP_NUMBER}`,
     "priceRange": "$$$",
     "address": {
       "@type": "PostalAddress",
@@ -90,7 +91,7 @@ const jsonLd = [
     "image": "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?q=80&w=1200&auto=format&fit=crop",
     "@id": "https://doggylobby.in#charmwood",
     "url": "https://doggylobby.in",
-    "telephone": "+919876543210",
+    "telephone": `+${WHATSAPP_NUMBER}`,
     "priceRange": "$$$",
     "address": {
       "@type": "PostalAddress",

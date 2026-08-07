@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { MapPin, Phone, MessageCircle, Clock, Navigation, Mail } from "lucide-react"
+import { WHATSAPP_NUMBER } from "@/lib/constants"
 import MagneticButton from "@/components/ui/MagneticButton"
 
 export default function Contact() {
@@ -145,7 +146,7 @@ export default function Contact() {
               Charmwood Directions
             </a>
             
-            <a href="tel:+919876543210" className="contact-item interactive w-full flex items-center justify-center gap-2 bg-white/5 border border-white/10 text-white px-6 py-3 rounded-full font-bold text-sm hover:bg-white/10 transition-colors">
+            <a href={`tel:+${WHATSAPP_NUMBER}`} className="contact-item interactive w-full flex items-center justify-center gap-2 bg-white/5 border border-white/10 text-white px-6 py-3 rounded-full font-bold text-sm hover:bg-white/10 transition-colors">
               <Phone size={16} />
               Call Store
             </a>
@@ -156,7 +157,7 @@ export default function Contact() {
 
       {/* Floating WhatsApp Button (Desktop) */}
       <div className="hidden md:block absolute bottom-12 right-12 z-50">
-        <MagneticButton href="https://wa.me/919876543210">
+        <MagneticButton href={`https://wa.me/${WHATSAPP_NUMBER}`}>
           <div className="w-20 h-20 bg-[#25D366] rounded-full flex items-center justify-center shadow-[0_10px_40px_rgba(37,211,102,0.5)] relative">
             <MessageCircle size={32} className="text-white relative z-10" />
             <div className="absolute inset-0 border-[3px] border-[#25D366] rounded-full animate-ping opacity-60"></div>

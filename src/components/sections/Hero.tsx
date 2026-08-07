@@ -3,6 +3,7 @@
 import { useRef } from "react"
 import { motion } from "framer-motion"
 import { ArrowRight, MessageCircle, Star, ShieldCheck, Award } from "lucide-react"
+import { WHATSAPP_NUMBER } from "@/lib/constants"
 import MagneticButton from "@/components/ui/MagneticButton"
 import { useCursor } from "@/components/ui/CursorProvider"
 
@@ -102,7 +103,7 @@ export default function Hero() {
           </div>
           
           <div onMouseEnter={() => handleMouseEnter("Chat", "visit")} onMouseLeave={handleMouseLeave} className="w-full sm:w-auto">
-            <MagneticButton href="https://wa.me/919876543210" className="group w-full sm:w-auto glass-dark px-8 py-4 rounded-full font-bold text-lg hover:bg-white hover:text-black transition-all justify-center">
+            <MagneticButton href={`https://wa.me/${WHATSAPP_NUMBER}`} className="group w-full sm:w-auto glass-dark px-8 py-4 rounded-full font-bold text-lg hover:bg-white hover:text-black transition-all justify-center">
               <MessageCircle size={20} className="text-[#25D366] group-hover:scale-110 transition-transform" />
               WhatsApp
             </MagneticButton>

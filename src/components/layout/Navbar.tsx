@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
 import { Menu, X, Phone } from "lucide-react"
+import { WHATSAPP_NUMBER } from "@/lib/constants"
 import CartIcon from "@/components/cart/CartIcon"
 import ProductSearch from "@/components/layout/ProductSearch"
 
@@ -66,7 +67,7 @@ export default function Navbar() {
 
         <div className="hidden lg:flex items-center gap-6 max-lg:hidden">
           <ProductSearch className="w-48 lg:w-64" />
-          <Link href="tel:+919876543210" className="flex items-center gap-2 hover:text-[var(--color-brand-orange)] transition-colors group">
+          <Link href={`tel:+${WHATSAPP_NUMBER}`} className="flex items-center gap-2 hover:text-[var(--color-brand-orange)] transition-colors group">
             <div className="w-8 h-8 rounded-full bg-white/50 border border-white/60 shadow-sm flex items-center justify-center group-hover:bg-white transition-colors">
               <Phone size={14} className="text-black" />
             </div>
