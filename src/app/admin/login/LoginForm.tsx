@@ -1,6 +1,6 @@
 'use client'
 
-import { useActionState } from 'react'
+import { useActionState, useEffect, useState } from 'react'
 import { loginAction } from '../actions'
 
 const initialState = {
@@ -9,9 +9,25 @@ const initialState = {
 
 export default function LoginForm() {
   const [state, formAction, isPending] = useActionState(loginAction, initialState)
+  const [showSuccess, setShowSuccess] = useState(false)
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search)
+      if (urlParams.get('reset') === 'success') {
+        setShowSuccess(true)
+        window.history.replaceState({}, document.title, window.location.pathname)
+      }
+    }
+  }, [])
 
   return (
     <form action={formAction} className="space-y-6">
+      {showSuccess && (
+        <div className="p-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-lg text-center font-medium mb-4">
+          Password updated successfully. Please sign in.
+        </div>
+      )}
       {state?.error && (
         <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg">
           {state.error}
@@ -29,7 +45,10 @@ export default function LoginForm() {
       </div>
 
       <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">Password</label>
+        <div className="flex items-center justify-between mb-2">
+          <label className="block text-sm font-semibold text-gray-700">Password</label>
+          <a href="/admin/forgot-password" className="text-sm font-semibold text-blue-600 hover:text-blue-800 transition-colors">Forgot Password?</a>
+        </div>
         <input
           name="password"
           type="password"
