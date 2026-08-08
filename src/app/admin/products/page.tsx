@@ -1,6 +1,7 @@
 import { requireAdminAuth } from '@/lib/utils/admin-auth'
 import { getSupabaseAdmin } from '@/lib/supabase/admin'
 import Link from 'next/link'
+import ProductImage from '@/components/admin/ProductImage'
 
 export const dynamic = 'force-dynamic'
 
@@ -25,6 +26,12 @@ export default async function AdminProductsPage() {
           <p className="mt-2 text-sm text-gray-700">A list of all products in your store.</p>
         </div>
         <div className="mt-4 sm:mt-0">
+          <Link
+            href="/admin/products/import"
+            className="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 sm:w-auto transition-colors mr-3"
+          >
+            Bulk Import
+          </Link>
           <Link
             href="/admin/products/new"
             className="inline-flex items-center justify-center rounded-md border border-transparent bg-black px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 sm:w-auto transition-colors"
@@ -57,11 +64,7 @@ export default async function AdminProductsPage() {
                     <tr key={product.id}>
                       <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
                         <div className="h-12 w-12 flex-shrink-0 relative rounded-md overflow-hidden bg-gray-100">
-                          {product.image_urls?.[0] ? (
-                            <img src={product.image_urls[0]} alt="" className="h-full w-full object-cover" />
-                          ) : (
-                            <div className="h-full w-full flex items-center justify-center text-gray-400">No Img</div>
-                          )}
+                          <ProductImage src={product.image_urls?.[0] || ''} alt="" />
                         </div>
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm font-medium text-gray-900">{product.name}</td>

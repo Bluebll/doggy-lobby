@@ -2,12 +2,9 @@ import type { Metadata, Viewport } from "next";
 import { Manrope, Inter } from "next/font/google";
 import "./globals.css";
 import { SmoothScroll } from "@/components/layout/SmoothScroll";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
-import MobileBottomNav from "@/components/layout/MobileBottomNav";
 import { CustomCursor, AmbientBackground, NoiseOverlay } from "@/components/ui/GlobalEffects";
 import { CursorProvider } from "@/components/ui/CursorProvider";
-import CartDrawer from "@/components/cart/CartDrawer";
+import PublicLayoutElements from "@/components/layout/PublicLayoutElements";
 import { Toaster } from "sonner";
 import { WHATSAPP_NUMBER } from "@/lib/constants";
 
@@ -136,12 +133,10 @@ export default function RootLayout({
           <AmbientBackground />
           <CustomCursor />
           <SmoothScroll>
-            <Navbar />
-            {children}
-            <Footer />
-            <MobileBottomNav />
+            <PublicLayoutElements>
+              {children}
+            </PublicLayoutElements>
           </SmoothScroll>
-          <CartDrawer />
           <Toaster position="top-right" duration={2500} />
         </CursorProvider>
       </body>

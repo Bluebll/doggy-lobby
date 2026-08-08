@@ -2,12 +2,15 @@
 
 import { use, useEffect, useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { useCart } from '@/stores/cart-store'
 import { createClient } from '@supabase/supabase-js'
 import type { Product } from '@/lib/queries/products'
 
 export default function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
+  const router = useRouter()
   const { slug } = use(params)
   const [product, setProduct] = useState<Product | null>(null)
   const [loading, setLoading] = useState(true)
@@ -71,15 +74,29 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
 
   return (
     <div className="min-h-screen bg-white p-8">
-      <Link href="/" className="text-orange-600 mb-4 inline-block">← Back Home</Link>
+      <button 
+        onClick={(e) => {
+          e.preventDefault()
+          window.scrollTo({ top: 0, behavior: 'instant' })
+          router.push('/')
+        }}
+        className="text-orange-600 mb-4 inline-block hover:underline"
+      >
+        ← Back Home
+      </button>
       <div className="max-w-2xl mx-auto mt-8">
         {product.image_urls && product.image_urls.length > 0 ? (
           <div className="mb-8">
-            <img 
-              src={product.image_urls[selectedImageIdx] || product.image_urls[0]} 
-              alt={product.name} 
-              className="w-full h-96 object-cover rounded bg-gray-100 transition-opacity duration-300" 
-            />
+            <div className="relative w-full h-96 rounded overflow-hidden bg-gray-100">
+              <Image 
+                src={product.image_urls[selectedImageIdx] || product.image_urls[0]} 
+                alt={product.name} 
+                fill
+                priority
+                sizes="(max-width: 768px) 100vw, 42rem"
+                className="object-cover transition-opacity duration-300" 
+              />
+            </div>
             {product.image_urls.length > 1 && (
               <div className="flex gap-4 mt-4 overflow-x-auto pb-2 scrollbar-hide">
                 {product.image_urls.map((url, idx) => (
@@ -92,7 +109,15 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
                         : 'border-transparent hover:border-gray-300 opacity-60 hover:opacity-100'
                     }`}
                   >
-                    <img src={url} alt={`${product.name} thumbnail ${idx + 1}`} className="w-full h-full object-cover" />
+                    <div className="relative w-full h-full">
+                      <Image 
+                        src={url} 
+                        alt={`${product.name} thumbnail ${idx + 1}`} 
+                        fill
+                        sizes="96px"
+                        className="object-cover" 
+                      />
+                    </div>
                   </button>
                 ))}
               </div>
@@ -129,9 +154,6 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
           <div className="flex items-center gap-2 justify-center">
             <span>↩</span> Easy returns
           </div>
-          <div className="flex items-center gap-2 justify-center">
-            <span>🔒</span> Secure payment
-          </div>
         </div>
 
         {/* Related Products */}
@@ -143,7 +165,13 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
                 <Link key={p.id} href={`/products/${p.slug}`} className="group block">
                   <div className="bg-gray-100 rounded-2xl overflow-hidden aspect-square mb-4 relative">
                     {p.image_urls?.[0] ? (
-                      <img src={p.image_urls[0]} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" />
+                      <Image 
+                        src={p.image_urls[0]} 
+                        alt={p.name} 
+                        fill
+                        sizes="(max-width: 640px) 50vw, 25vw"
+                        className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out" 
+                      />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-gray-400">No image</div>
                     )}

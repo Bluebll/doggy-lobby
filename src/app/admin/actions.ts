@@ -85,7 +85,7 @@ export async function uploadImageAction(formData: FormData): Promise<{ url?: str
   return { url: publicUrlData.publicUrl }
 }
 
-async function generateUniqueSlug(name: string): Promise<string> {
+export async function generateUniqueSlug(name: string): Promise<string> {
   const supabase = getSupabaseAdmin()
   const baseSlug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')
   let slug = baseSlug

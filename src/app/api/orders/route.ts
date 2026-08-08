@@ -49,13 +49,21 @@ export async function POST(req: Request) {
           name: p.name,
           price: Number(p.price),
           quantity: Math.max(1, Math.floor(i.quantity)),
+          stock: p.stock,
           image: (p.image_urls && p.image_urls[0]) || undefined,
         }
       })
-      .filter(Boolean) as Array<{ id: number; name: string; price: number; quantity: number; image?: string }>
+      .filter(Boolean) as Array<{ id: number; name: string; price: number; quantity: number; stock: number; image?: string }>
 
     if (snapshot.length === 0) {
       return NextResponse.json({ error: "No valid products in cart" }, { status: 400 })
+    }
+
+    // Check for sufficient stock
+    for (const item of snapshot) {
+      if (item.stock < item.quantity) {
+        return NextResponse.json({ error: `Not enough stock for ${item.name}. Only ${item.stock} left.` }, { status: 400 })
+      }
     }
 
     const total = snapshot.reduce((n, i) => n + i.price * i.quantity, 0)
@@ -90,6 +98,45 @@ export async function POST(req: Request) {
     const { error: itemsErr } = await supabase.from("order_items").insert(orderItems)
     
     if (itemsErr) return NextResponse.json({ error: itemsErr.message }, { status: 500 })
+
+    // Decrease stock using Optimistic Concurrency Control (OCC)
+    for (const item of snapshot) {
+      let success = false;
+      let retries = 3;
+      
+      while (retries > 0 && !success) {
+        // Fetch latest stock immediately before update
+        const { data: latest } = await supabase
+          .from("products")
+          .select("stock")
+          .eq("id", item.id)
+          .single();
+          
+        if (!latest || latest.stock < item.quantity) {
+          // Fallback if someone else bought the last item during our checkout process
+          return NextResponse.json({ error: `Not enough stock for ${item.name}. Only ${latest?.stock || 0} left.` }, { status: 400 });
+        }
+
+        // Attempt OCC atomic update
+        const { data: updated } = await supabase
+          .from("products")
+          .update({ stock: latest.stock - item.quantity })
+          .eq("id", item.id)
+          .eq("stock", latest.stock) // only update if stock matches our latest read
+          .select("id");
+          
+        if (updated && updated.length > 0) {
+          success = true;
+        } else {
+          retries--;
+        }
+      }
+      
+      if (!success) {
+        // If we fail 3 times due to immense concurrent load on the exact same product, we fail gracefully
+        return NextResponse.json({ error: `High traffic. Could not process ${item.name}. Please try again.` }, { status: 409 });
+      }
+    }
 
     return NextResponse.json({ order })
   } catch (e) {
