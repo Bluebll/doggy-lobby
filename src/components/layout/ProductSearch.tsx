@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react"
 import { Search, Loader2 } from "lucide-react"
 import { createClient } from "@supabase/supabase-js"
 import { useRouter } from "next/navigation"
+import SafeImage from "@/components/ui/SafeImage"
 
 type Product = {
   id: string
@@ -100,7 +101,7 @@ export default function ProductSearch({ className = "" }: { className?: string }
             >
               <div className="w-10 h-10 rounded-md bg-gray-100 overflow-hidden flex-shrink-0 border border-gray-200/50">
                 {product.image_urls?.[0] ? (
-                  <img src={product.image_urls[0]} alt={product.name} className="w-full h-full object-cover" />
+                  <SafeImage src={product.image_urls[0]} alt={product.name} className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full bg-gray-100" />
                 )}

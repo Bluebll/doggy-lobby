@@ -2,15 +2,15 @@
 
 import { use, useEffect, useState } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
-import { useRouter } from 'next/navigation'
+import SafeImage from '@/components/ui/SafeImage'
+import BackButton from '@/components/ui/BackButton'
+import HomeButton from '@/components/ui/HomeButton'
 import { toast } from 'sonner'
 import { useCart } from '@/stores/cart-store'
 import { createClient } from '@supabase/supabase-js'
 import type { Product } from '@/lib/queries/products'
 
 export default function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
-  const router = useRouter()
   const { slug } = use(params)
   const [product, setProduct] = useState<Product | null>(null)
   const [loading, setLoading] = useState(true)
@@ -70,25 +70,20 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
   }, [slug])
 
   if (loading) return <div className="min-h-screen p-8 text-center">Loading...</div>
-  if (!product || !product.id) return <div className="min-h-screen p-8"><Link href="/">← Back Home</Link><p className="mt-4">Product not found</p></div>
+  if (!product || !product.id) return <div className="min-h-screen p-8"><div className="flex gap-2 mb-4"><BackButton /><HomeButton /></div><p className="mt-4">Product not found</p></div>
 
   return (
     <div className="min-h-screen bg-white p-8">
-      <button 
-        onClick={(e) => {
-          e.preventDefault()
-          window.scrollTo({ top: 0, behavior: 'instant' })
-          router.push('/')
-        }}
-        className="text-orange-600 mb-4 inline-block hover:underline"
-      >
-        ← Back Home
-      </button>
+      <div className="flex gap-2 mb-4 relative z-10">
+        <BackButton />
+        <HomeButton />
+      </div>
       <div className="max-w-2xl mx-auto mt-8">
         {product.image_urls && product.image_urls.length > 0 ? (
           <div className="mb-8">
             <div className="relative w-full h-96 rounded overflow-hidden bg-gray-100">
-              <Image 
+              <SafeImage 
+                isNextImage
                 src={product.image_urls[selectedImageIdx] || product.image_urls[0]} 
                 alt={product.name} 
                 fill
@@ -110,11 +105,12 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
                     }`}
                   >
                     <div className="relative w-full h-full">
-                      <Image 
+                      <SafeImage 
+                        isNextImage
                         src={url} 
-                        alt={`${product.name} thumbnail ${idx + 1}`} 
+                        alt={`${product.name} - ${idx + 1}`} 
                         fill
-                        sizes="96px"
+                        sizes="6rem"
                         className="object-cover" 
                       />
                     </div>
@@ -165,12 +161,13 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
                 <Link key={p.id} href={`/products/${p.slug}`} className="group block">
                   <div className="bg-gray-100 rounded-2xl overflow-hidden aspect-square mb-4 relative">
                     {p.image_urls?.[0] ? (
-                      <Image 
+                      <SafeImage 
+                        isNextImage
                         src={p.image_urls[0]} 
                         alt={p.name} 
                         fill
-                        sizes="(max-width: 640px) 50vw, 25vw"
-                        className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out" 
+                        sizes="(max-width: 768px) 100vw, 25vw"
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-gray-400">No image</div>

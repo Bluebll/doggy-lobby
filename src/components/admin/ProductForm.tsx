@@ -61,6 +61,25 @@ export default function ProductForm({ product, isEdit }: { product?: Product, is
     setIsSubmitting(true)
     setError(null)
 
+    // Validate images on client side
+    const validateImage = (url: string): Promise<boolean> => {
+      return new Promise((resolve) => {
+        const img = new Image()
+        img.onload = () => resolve(true)
+        img.onerror = () => resolve(false)
+        img.src = url
+      })
+    }
+
+    for (const url of images) {
+      const isValid = await validateImage(url)
+      if (!isValid) {
+        setError(`Invalid Image URL detected: ${url}. Please provide a working image.`)
+        setIsSubmitting(false)
+        return
+      }
+    }
+
     const formData = new FormData(e.currentTarget)
     // Add all current images to formData
     images.forEach(url => formData.append('image_urls', url))

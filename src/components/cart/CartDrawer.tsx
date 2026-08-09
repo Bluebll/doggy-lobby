@@ -10,6 +10,7 @@ import { buildOrderMessage, buildWhatsAppUrl } from "@/lib/whatsapp"
 type CartItem = ReturnType<typeof useCart.getState>["items"][number]
 
 import { create } from "zustand"
+import SafeImage from "@/components/ui/SafeImage"
 
 export const useCartUI = create<{ isOpen: boolean; openCart: () => void; closeCart: () => void }>((set) => ({
   isOpen: false,
@@ -231,7 +232,7 @@ function CartList({
         <li key={i.id} className="px-6 py-4 flex gap-4">
           <div className="relative w-20 h-20 rounded-xl overflow-hidden bg-[var(--color-brand-gray)] shrink-0">
             {i.image && (
-              <img src={i.image} alt={i.name} className="absolute inset-0 w-full h-full object-cover" />
+              <SafeImage src={i.image} alt={i.name} className="absolute inset-0 w-full h-full object-cover" />
             )}
           </div>
           <div className="flex-1 min-w-0">

@@ -80,8 +80,9 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* Mobile: menu button only */}
+        {/* Mobile: Cart and Menu */}
         <div className="flex lg:hidden items-center gap-2">
+          <CartIcon />
           <button aria-label="Toggle menu" aria-expanded={mobileMenuOpen} className="w-10 h-10 flex items-center justify-center bg-white/50 backdrop-blur-md rounded-full border border-white/60 focus-visible:ring-2 focus-visible:ring-black" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
             {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
