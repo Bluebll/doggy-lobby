@@ -17,6 +17,21 @@ interface CreateOrderBody {
   items: CartItem[]
 }
 
+function generateOrderNumber() {
+  const date = new Date()
+  const yyyy = date.getFullYear()
+  const mm = String(date.getMonth() + 1).padStart(2, "0")
+  const dd = String(date.getDate()).padStart(2, "0")
+  
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+  let randomCode = ""
+  for (let i = 0; i < 6; i++) {
+    randomCode += chars.charAt(Math.floor(Math.random() * chars.length))
+  }
+  
+  return `DL-${yyyy}${mm}${dd}-${randomCode}`
+}
+
 export async function POST(req: Request) {
   try {
     const body = (await req.json()) as CreateOrderBody
@@ -68,14 +83,13 @@ export async function POST(req: Request) {
 
     const total = snapshot.reduce((n, i) => n + i.price * i.quantity, 0)
 
-    // Generate order number manually
-    const orderNumber = `DL-${Date.now()}`
+    const finalOrderNumber = generateOrderNumber()
 
     // Insert into 'orders'
     const { data: order, error: orderErr } = await supabase
       .from("orders")
       .insert({
-        order_number: orderNumber,
+        order_number: finalOrderNumber,
         customer_name: body.customer_name.trim(),
         customer_phone: body.customer_phone.trim(),
         // Cannot insert address or notes because columns do not exist in current schema
