@@ -58,6 +58,9 @@ export default function ProductForm({ product, isEdit }: { product?: Product, is
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    
+    const formData = new FormData(e.currentTarget)
+
     setIsSubmitting(true)
     setError(null)
 
@@ -80,7 +83,7 @@ export default function ProductForm({ product, isEdit }: { product?: Product, is
       }
     }
 
-    const formData = new FormData(e.currentTarget)
+    // Add all current images to formData
     // Add all current images to formData
     images.forEach(url => formData.append('image_urls', url))
 
