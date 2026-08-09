@@ -2,6 +2,29 @@ import { requireAdminAuth } from '@/lib/utils/admin-auth'
 import { getSupabaseAdmin } from '@/lib/supabase/admin'
 import Link from 'next/link'
 import ProductImage from '@/components/admin/ProductImage'
+import { revalidatePath } from 'next/cache'
+
+async function updateOrderStatus(formData: FormData) {
+  'use server'
+  await requireAdminAuth()
+  
+  const orderId = formData.get('orderId') as string
+  const status = formData.get('status') as string
+  
+  const supabase = getSupabaseAdmin()
+  const { error } = await supabase
+    .from('orders')
+    .update({ status })
+    .eq('id', orderId)
+    
+  if (error) {
+    console.error('Failed to update status:', error)
+    throw new Error('Failed to update status')
+  }
+  
+  revalidatePath(`/admin/orders/${orderId}`)
+  revalidatePath('/admin/orders')
+}
 
 export const dynamic = 'force-dynamic'
 
@@ -119,6 +142,38 @@ export default async function AdminOrderDetailsPage({
               )
             })}
           </ul>
+        </div>
+      </div>
+
+      <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-8">
+        <div className="px-4 py-5 sm:px-6">
+          <h3 className="text-lg leading-6 font-medium text-gray-900">Update Order Status</h3>
+        </div>
+        <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
+          <form action={updateOrderStatus} className="flex items-end gap-4 max-w-sm">
+            <input type="hidden" name="orderId" value={order.id} />
+            <div className="flex-1">
+              <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+              <select
+                id="status"
+                name="status"
+                defaultValue={order.status}
+                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-black focus:border-black sm:text-sm rounded-md border"
+              >
+                <option value="pending">Pending</option>
+                <option value="confirmed">Confirmed</option>
+                <option value="shipped">Shipped</option>
+                <option value="delivered">Delivered</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+            </div>
+            <button
+              type="submit"
+              className="inline-flex items-center justify-center rounded-md border border-transparent bg-black px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 sm:w-auto transition-colors"
+            >
+              Update
+            </button>
+          </form>
         </div>
       </div>
 
