@@ -1,5 +1,6 @@
 import { requireAdminAuth } from '@/lib/utils/admin-auth'
 import { getSupabaseAdmin } from '@/lib/supabase/admin'
+import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
 
@@ -43,8 +44,10 @@ export default async function AdminOrdersPage() {
                 <tbody className="divide-y divide-gray-200 bg-white">
                   {orders?.map((order) => (
                     <tr key={order.id}>
-                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                        {order.order_number}
+                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-6">
+                        <Link href={`/admin/orders/${order.id}`} className="text-blue-600 hover:text-blue-900 transition-colors">
+                          {order.order_number}
+                        </Link>
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900">
                         {order.customer_name}
