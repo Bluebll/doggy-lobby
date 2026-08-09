@@ -230,9 +230,9 @@ function CartList({
     <ul className="divide-y divide-black/5">
       {items.map((i) => (
         <li key={i.id} className="px-6 py-4 flex gap-4">
-          <div className="relative w-20 h-20 rounded-xl overflow-hidden bg-[var(--color-brand-gray)] shrink-0">
+          <div className="relative w-20 h-20 rounded-xl overflow-hidden bg-white shrink-0">
             {i.image && (
-              <SafeImage src={i.image} alt={i.name} className="absolute inset-0 w-full h-full object-cover" />
+              <SafeImage src={i.image} alt={i.name} className="absolute inset-0 w-full h-full object-contain" />
             )}
           </div>
           <div className="flex-1 min-w-0">
@@ -251,7 +251,8 @@ function CartList({
                 <span className="px-3 text-sm font-bold">{i.quantity}</span>
                 <button
                   onClick={() => addToCart({ ...i, quantity: 1 })}
-                  className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-white transition-colors"
+                  disabled={i.quantity >= (i.stock ?? 999)}
+                  className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   aria-label="Increase quantity"
                 >
                   <Plus size={14} />

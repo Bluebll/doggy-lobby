@@ -8,14 +8,23 @@ export default function BackButton({ fallback = '/' }: { fallback?: string }) {
   const [canGoBack, setCanGoBack] = useState(false)
 
   useEffect(() => {
-    // Basic check if there's history in the app
-    setCanGoBack(window.history.length > 1)
+    const pagesViewed = parseInt(sessionStorage.getItem('pages_viewed') || '0', 10)
+    if (pagesViewed === 0) {
+      sessionStorage.setItem('pages_viewed', '1')
+    } else {
+      sessionStorage.setItem('pages_viewed', (pagesViewed + 1).toString())
+    }
+    
+    // If they have viewed more than 1 page in this session, or the referrer is our site, we can safely go back
+    if (pagesViewed > 0 || document.referrer.includes(window.location.host)) {
+      setCanGoBack(true)
+    }
   }, [])
 
   return (
     <button 
       onClick={() => {
-        if (canGoBack && document.referrer.includes(window.location.host)) {
+        if (canGoBack) {
           router.back()
         } else {
           router.push(fallback)

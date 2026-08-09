@@ -70,12 +70,13 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
   }, [slug])
 
   if (loading) return <div className="min-h-screen p-8 text-center">Loading...</div>
-  if (!product || !product.id) return <div className="min-h-screen p-8"><div className="flex gap-2 mb-4"><BackButton /><HomeButton /></div><p className="mt-4">Product not found</p></div>
+  if (!product || !product.id) return <div className="min-h-screen pt-40 px-4 md:px-8 pb-8"><div className="flex gap-2 mb-4"><BackButton /><HomeButton /></div><p className="mt-4">Product not found</p></div>
 
   return (
-    <div className="min-h-screen bg-white p-8">
+    <div className="min-h-screen bg-white pt-40 px-4 md:px-8 pb-8">
       <div className="flex gap-2 mb-4 relative z-10">
-        <BackButton />
+        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+        <BackButton fallback={(product as any).collection ? `/collections/${(product as any).collection}` : '/'} />
         <HomeButton />
       </div>
       <div className="max-w-2xl mx-auto mt-8">
@@ -89,7 +90,7 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
                 fill
                 priority
                 sizes="(max-width: 768px) 100vw, 42rem"
-                className="object-cover transition-opacity duration-300" 
+                className="object-contain bg-white transition-opacity duration-300" 
               />
             </div>
             {product.image_urls.length > 1 && (
@@ -104,14 +105,14 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
                         : 'border-transparent hover:border-gray-300 opacity-60 hover:opacity-100'
                     }`}
                   >
-                    <div className="relative w-full h-full">
+                    <div className="relative w-full h-full bg-white">
                       <SafeImage 
                         isNextImage
                         src={url} 
                         alt={`${product.name} - ${idx + 1}`} 
                         fill
                         sizes="6rem"
-                        className="object-cover" 
+                        className="object-contain bg-white" 
                       />
                     </div>
                   </button>
@@ -135,13 +136,27 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
         </div>
 
         <p className="text-sm text-gray-500 mb-6">{product.stock} in stock</p>
-        
-        <button onClick={() => {
-          addToCart({ id: product.id, name: product.name, price: product.price, image: product.image_urls?.[0] || '', quantity: 1 })
-          toast.success('Added to cart')
-        }} className="bg-orange-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-orange-700 w-full transition-colors shadow-sm">
-          Add to Cart
-        </button>
+        <div className="flex gap-4">
+          <button 
+            onClick={() => {
+              if (product.stock > 0) {
+                addToCart({ 
+                  id: product.id, 
+                  name: product.name, 
+                  price: product.price, 
+                  image: product.image_urls?.[0] || '', 
+                  quantity: 1,
+                  stock: product.stock
+                })
+                toast.success('Added to cart')
+              }
+            }}
+            disabled={product.stock === 0}
+            className="flex-1 bg-black text-white px-8 py-4 rounded-full font-bold hover:bg-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {product.stock === 0 ? "Out of Stock" : "Add to Cart"}
+          </button>
+        </div>
 
         <div className="mt-6 flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center text-sm text-gray-600 border-t border-gray-100 pt-6">
           <div className="flex items-center gap-2 justify-center">

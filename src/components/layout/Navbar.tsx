@@ -9,10 +9,10 @@ import CartIcon from "@/components/cart/CartIcon"
 import ProductSearch from "@/components/layout/ProductSearch"
 
 const navLinks = [
-  { name: "Shop", href: "#collections" },
-  { name: "Our Story", href: "#about" },
-  { name: "Gallery", href: "#gallery" },
-  { name: "FAQ", href: "#faq" },
+  { name: "Shop", href: "/#collections" },
+  { name: "Our Story", href: "/#about" },
+  { name: "Gallery", href: "/#gallery" },
+  { name: "FAQ", href: "/#faq" },
 ]
 
 export default function Navbar() {
@@ -74,7 +74,7 @@ export default function Navbar() {
             <span className="text-sm font-bold text-black/80 group-hover:text-black">Call Us</span>
           </Link>
           <CartIcon />
-          <Link href="#contact" className="interactive relative px-6 py-2.5 rounded-full text-sm font-bold text-white bg-black overflow-hidden group">
+          <Link href="/#contact" className="interactive relative px-6 py-2.5 rounded-full text-sm font-bold text-white bg-black overflow-hidden group">
             <span className="relative z-10">Visit Store</span>
             <div className="absolute inset-0 bg-[var(--color-brand-orange)] transform scale-x-0 origin-left transition-transform duration-300 group-hover:scale-x-100 z-0"></div>
           </Link>
@@ -121,7 +121,7 @@ export default function Navbar() {
               </motion.div>
             ))}
             <hr className="my-4 border-black/10" />
-            <Link href="#contact" onClick={() => setMobileMenuOpen(false)} className="bg-black text-white px-6 py-4 rounded-full text-center font-bold text-lg">
+            <Link href="/#contact" onClick={() => setMobileMenuOpen(false)} className="bg-black text-white px-6 py-4 rounded-full text-center font-bold text-lg">
               Visit Store
             </Link>
           </motion.div>

@@ -100,9 +100,9 @@ export default function Footer() {
           <div>
             <h4 className="font-heading font-bold text-white mb-6">Explore</h4>
             <ul className="space-y-4 text-[#a1a1aa]">
-              <li><Link href="#categories" className="hover:text-white transition-colors flex items-center gap-1 group">Shop All <ArrowUpRight size={14} className="opacity-0 -translate-y-1 translate-x-1 group-hover:opacity-100 group-hover:translate-y-0 group-hover:translate-x-0 transition-all" /></Link></li>
-              <li><Link href="#about" className="hover:text-white transition-colors flex items-center gap-1 group">Our Story <ArrowUpRight size={14} className="opacity-0 -translate-y-1 translate-x-1 group-hover:opacity-100 group-hover:translate-y-0 group-hover:translate-x-0 transition-all" /></Link></li>
-              <li><Link href="#faq" className="hover:text-white transition-colors flex items-center gap-1 group">FAQ <ArrowUpRight size={14} className="opacity-0 -translate-y-1 translate-x-1 group-hover:opacity-100 group-hover:translate-y-0 group-hover:translate-x-0 transition-all" /></Link></li>
+              <li><Link href="/#collections" className="hover:text-white transition-colors flex items-center gap-1 group">Shop All <ArrowUpRight size={14} className="opacity-0 -translate-y-1 translate-x-1 group-hover:opacity-100 group-hover:translate-y-0 group-hover:translate-x-0 transition-all" /></Link></li>
+              <li><Link href="/#about" className="hover:text-white transition-colors flex items-center gap-1 group">Our Story <ArrowUpRight size={14} className="opacity-0 -translate-y-1 translate-x-1 group-hover:opacity-100 group-hover:translate-y-0 group-hover:translate-x-0 transition-all" /></Link></li>
+              <li><Link href="/#faq" className="hover:text-white transition-colors flex items-center gap-1 group">FAQ <ArrowUpRight size={14} className="opacity-0 -translate-y-1 translate-x-1 group-hover:opacity-100 group-hover:translate-y-0 group-hover:translate-x-0 transition-all" /></Link></li>
               <li><Link href="#" className="hover:text-white transition-colors flex items-center gap-1 group">Journal <ArrowUpRight size={14} className="opacity-0 -translate-y-1 translate-x-1 group-hover:opacity-100 group-hover:translate-y-0 group-hover:translate-x-0 transition-all" /></Link></li>
             </ul>
           </div>

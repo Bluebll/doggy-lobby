@@ -34,8 +34,8 @@ export default async function CollectionPage({ params }: { params: Promise<{ typ
   const collectionName = collectionNames[type] || type
 
   return (
-    <div className="min-h-screen bg-white pt-40">
-      <div className="p-8 max-w-6xl mx-auto">
+    <div className="min-h-screen bg-white pt-40 px-4 md:px-8 pb-8">
+      <div className="max-w-6xl mx-auto">
         <div className="flex gap-2 mb-4 relative z-10">
           <BackButton />
           <HomeButton />
@@ -48,7 +48,7 @@ export default async function CollectionPage({ params }: { params: Promise<{ typ
             {products.map((p) => (
               <Link href={`/products/${p.slug}`} key={p.id} className="border rounded-lg p-4 hover:shadow-lg">
                 {p.image_urls && p.image_urls.length > 0 ? (
-                  <SafeImage src={p.image_urls[0]} alt={p.name} className="w-full h-48 object-cover rounded mb-4" />
+                  <SafeImage src={p.image_urls[0]} alt={p.name} className="w-full h-48 object-contain bg-white rounded mb-4" />
                 ) : (
                   <div className="bg-gray-100 h-48 rounded mb-4"></div>
                 )}
