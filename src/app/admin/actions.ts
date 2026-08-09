@@ -41,7 +41,7 @@ export async function loginAction(prevState: { error?: string } | undefined, for
     maxAge: 60 * 60 * 24 // 1 day
   })
 
-  redirect('/admin/products')
+  redirect('/admin/orders')
 }
 
 export async function logoutAction() {

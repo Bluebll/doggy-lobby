@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation'
 export default async function LoginPage() {
   const cookieStore = await cookies()
   if (cookieStore.get('admin_auth')) {
-    redirect('/admin/products')
+    redirect('/admin/orders')
   }
 
   return (

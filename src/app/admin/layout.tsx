@@ -18,11 +18,14 @@ export default async function AdminLayout({
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between h-16">
               <div className="flex items-center">
-                <Link href="/admin/products" className="text-xl font-bold tracking-tight text-gray-900">
+                <Link href="/admin/orders" className="text-xl font-bold tracking-tight text-gray-900">
                   Doggy Lobby Admin
                 </Link>
                 <div className="hidden sm:ml-10 sm:flex sm:space-x-8">
-                  <Link href="/admin/products" className="border-black text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                  <Link href="/admin/orders" className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors">
+                    Orders
+                  </Link>
+                  <Link href="/admin/products" className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors">
                     Products
                   </Link>
                 </div>
