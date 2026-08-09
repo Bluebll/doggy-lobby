@@ -49,6 +49,17 @@ export default function Navbar() {
               className="relative px-5 py-2 text-sm font-semibold text-black/70 hover:text-black transition-colors rounded-full"
               onMouseEnter={() => setActiveHover(link.name)}
               onMouseLeave={() => setActiveHover(null)}
+              onClick={(e) => {
+                if (link.href.startsWith('/#')) {
+                  const id = link.href.split('#')[1];
+                  const el = document.getElementById(id);
+                  if (el) {
+                    e.preventDefault();
+                    el.scrollIntoView({ behavior: 'smooth' });
+                    window.history.pushState(null, '', link.href);
+                  }
+                }
+              }}
             >
               <span className="relative z-10">{link.name}</span>
               {activeHover === link.name && (
@@ -74,7 +85,18 @@ export default function Navbar() {
             <span className="text-sm font-bold text-black/80 group-hover:text-black">Call Us</span>
           </Link>
           <CartIcon />
-          <Link href="/#contact" className="interactive relative px-6 py-2.5 rounded-full text-sm font-bold text-white bg-black overflow-hidden group">
+          <Link 
+            href="/#contact" 
+            className="interactive relative px-6 py-2.5 rounded-full text-sm font-bold text-white bg-black overflow-hidden group"
+            onClick={(e) => {
+              const el = document.getElementById('contact');
+              if (el) {
+                e.preventDefault();
+                el.scrollIntoView({ behavior: 'smooth' });
+                window.history.pushState(null, '', '/#contact');
+              }
+            }}
+          >
             <span className="relative z-10">Visit Store</span>
             <div className="absolute inset-0 bg-[var(--color-brand-orange)] transform scale-x-0 origin-left transition-transform duration-300 group-hover:scale-x-100 z-0"></div>
           </Link>
@@ -97,73 +119,73 @@ export default function Navbar() {
       {/* Mobile Nav */}
       <AnimatePresence>
         {mobileMenuOpen && (
-          <>
-            {/* Backdrop overlay */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="fixed inset-0 z-[-1] bg-black/10 backdrop-blur-md lg:hidden"
-              onClick={() => setMobileMenuOpen(false)}
-            />
-            {/* Menu card */}
-            <motion.div
-              initial={{ opacity: 0, y: -15 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
-              className="absolute top-[calc(100%+1rem)] left-4 right-4 bg-white/85 backdrop-blur-xl border border-white/50 shadow-2xl rounded-3xl flex flex-col p-6 gap-2 lg:hidden z-10"
-            >
-              {navLinks.map((link, i) => (
-                <motion.div
-                  key={link.name}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.05, duration: 0.3 }}
-                >
-                  <Link 
-                    href={link.href} 
-                    onClick={(e) => {
-                      if (link.href.startsWith('/#')) {
-                        const id = link.href.split('#')[1];
-                        const el = document.getElementById(id);
-                        if (el) {
-                          e.preventDefault();
-                          setMobileMenuOpen(false);
-                          el.scrollIntoView({ behavior: 'smooth' });
-                          window.history.pushState(null, '', link.href);
-                          return;
-                        }
-                      }
-                      setMobileMenuOpen(false);
-                    }} 
-                    className="block p-4 text-xl font-heading font-bold rounded-2xl hover:bg-white/60 transition-colors"
-                  >
-                    {link.name}
-                  </Link>
-                </motion.div>
-              ))}
-              <hr className="my-4 border-black/10" />
-              <Link 
-                href="/#contact" 
-                onClick={(e) => {
-                  const el = document.getElementById('contact');
-                  if (el) {
-                    e.preventDefault();
-                    setMobileMenuOpen(false);
-                    el.scrollIntoView({ behavior: 'smooth' });
-                    window.history.pushState(null, '', '/#contact');
-                    return;
-                  }
-                  setMobileMenuOpen(false);
-                }} 
-                className="bg-black text-white px-6 py-4 rounded-full text-center font-bold text-lg"
+          <motion.div
+            key="mobile-backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+            className="fixed inset-0 z-[-1] bg-black/25 backdrop-blur-xl backdrop-brightness-90 lg:hidden"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+        )}
+        {mobileMenuOpen && (
+          <motion.div
+            key="mobile-menu"
+            initial={{ opacity: 0, y: -15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -15 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+            className="absolute top-[calc(100%+1rem)] left-4 right-4 bg-white/95 backdrop-blur-2xl border border-white/60 shadow-xl rounded-3xl flex flex-col p-6 gap-2 lg:hidden z-10"
+          >
+            {navLinks.map((link, i) => (
+              <motion.div
+                key={link.name}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.05, duration: 0.25, ease: "easeOut" }}
               >
-                Visit Store
-              </Link>
-            </motion.div>
-          </>
+                <Link 
+                  href={link.href} 
+                  onClick={(e) => {
+                    if (link.href.startsWith('/#')) {
+                      const id = link.href.split('#')[1];
+                      const el = document.getElementById(id);
+                      if (el) {
+                        e.preventDefault();
+                        setMobileMenuOpen(false);
+                        el.scrollIntoView({ behavior: 'smooth' });
+                        window.history.pushState(null, '', link.href);
+                        return;
+                      }
+                    }
+                    setMobileMenuOpen(false);
+                  }} 
+                  className="block p-4 text-xl font-heading font-bold rounded-2xl hover:bg-white/60 transition-colors"
+                >
+                  {link.name}
+                </Link>
+              </motion.div>
+            ))}
+            <hr className="my-4 border-black/10" />
+            <Link 
+              href="/#contact" 
+              onClick={(e) => {
+                const el = document.getElementById('contact');
+                if (el) {
+                  e.preventDefault();
+                  setMobileMenuOpen(false);
+                  el.scrollIntoView({ behavior: 'smooth' });
+                  window.history.pushState(null, '', '/#contact');
+                  return;
+                }
+                setMobileMenuOpen(false);
+              }} 
+              className="bg-black text-white px-6 py-4 rounded-full text-center font-bold text-lg"
+            >
+              Visit Store
+            </Link>
+          </motion.div>
         )}
       </AnimatePresence>
     </header>

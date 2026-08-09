@@ -74,24 +74,30 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
 
   return (
     <div className="min-h-screen bg-white pt-40 px-4 md:px-8 pb-8">
-      <div className="flex gap-2 mb-4 relative z-10">
-        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-        <BackButton fallback={(product as any).collection ? `/collections/${(product as any).collection}` : '/'} />
-        <HomeButton />
-      </div>
-      <div className="max-w-2xl mx-auto mt-8">
+      <div className="max-w-6xl mx-auto">
+        <div className="flex gap-2 mb-4 relative z-10">
+          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+          <BackButton fallback={(product as any).collection ? `/collections/${(product as any).collection}` : '/'} />
+          <HomeButton />
+        </div>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mt-8">
+          {/* LEFT: Image Showcase */}
+          <div>
         {product.image_urls && product.image_urls.length > 0 ? (
           <div className="mb-8">
-            <div className="relative w-full h-96 rounded overflow-hidden bg-gray-100">
-              <SafeImage 
-                isNextImage
-                src={product.image_urls[selectedImageIdx] || product.image_urls[0]} 
-                alt={product.name} 
-                fill
-                priority
-                sizes="(max-width: 768px) 100vw, 42rem"
-                className="object-contain bg-white transition-opacity duration-300" 
-              />
+            <div className="w-full aspect-square rounded-3xl overflow-hidden bg-gray-50 border border-gray-100 shadow-sm group p-6 sm:p-10 flex items-center justify-center">
+              <div className="relative w-full h-full">
+                <SafeImage 
+                  isNextImage
+                  src={product.image_urls[selectedImageIdx] || product.image_urls[0]} 
+                  alt={product.name} 
+                  fill
+                  priority
+                  sizes="(max-width: 768px) 100vw, 42rem"
+                  className="object-contain transition-transform duration-500 ease-out group-hover:scale-[1.03]" 
+                />
+              </div>
             </div>
             {product.image_urls.length > 1 && (
               <div className="flex gap-4 mt-4 overflow-x-auto pb-2 scrollbar-hide">
@@ -99,13 +105,13 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
                   <button
                     key={idx}
                     onClick={() => setSelectedImageIdx(idx)}
-                    className={`flex-shrink-0 w-24 h-24 rounded overflow-hidden border-2 transition-all ${
+                    className={`flex-shrink-0 w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden border-2 transition-all ${
                       selectedImageIdx === idx 
-                        ? 'border-orange-600' 
+                        ? 'border-gray-900 shadow-md' 
                         : 'border-transparent hover:border-gray-300 opacity-60 hover:opacity-100'
                     }`}
                   >
-                    <div className="relative w-full h-full bg-white">
+                    <div className="relative w-full h-full bg-gray-50">
                       <SafeImage 
                         isNextImage
                         src={url} 
@@ -121,9 +127,13 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
             )}
           </div>
         ) : (
-          <div className="bg-gray-100 h-96 rounded mb-8 flex items-center justify-center text-gray-400">No image</div>
+          <div className="w-full aspect-square rounded-3xl mb-8 flex items-center justify-center text-gray-400 bg-gray-50 border border-gray-100 shadow-sm">No image</div>
         )}
-        <h1 className="text-4xl font-bold mb-4">{product.name}</h1>
+          </div>
+
+          {/* RIGHT: Product Details */}
+          <div className="flex flex-col justify-start">
+            <h1 className="text-4xl font-bold mb-4">{product.name}</h1>
         <p className="text-2xl text-orange-600 font-bold mb-4">₹{product.price}</p>
         <p className="text-gray-600 mb-6">{product.description}</p>
         
@@ -158,14 +168,16 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
           </button>
         </div>
 
-        <div className="mt-6 flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center text-sm text-gray-600 border-t border-gray-100 pt-6">
-          <div className="flex items-center gap-2 justify-center">
-            <span>🚚</span> Free delivery in 3-5 days
-          </div>
-          <div className="flex items-center gap-2 justify-center">
-            <span>↩</span> Easy returns
+          <div className="mt-8 flex flex-col sm:flex-row gap-4 sm:gap-6 justify-start text-sm text-gray-600 border-t border-gray-100 pt-6">
+            <div className="flex items-center gap-2">
+              <span>🚚</span> Free delivery in 3-5 days
+            </div>
+            <div className="flex items-center gap-2">
+              <span>↩</span> Easy returns
+            </div>
           </div>
         </div>
+      </div>
 
         {/* Related Products */}
         {relatedProducts.length > 0 && (
