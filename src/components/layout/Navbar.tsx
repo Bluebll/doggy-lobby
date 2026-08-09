@@ -97,34 +97,73 @@ export default function Navbar() {
       {/* Mobile Nav */}
       <AnimatePresence>
         {mobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -20, scale: 0.95 }}
-            transition={{ type: "spring", stiffness: 300, damping: 25 }}
-            className="absolute top-[calc(100%+1rem)] left-4 right-4 glass-card bg-white/80 rounded-3xl flex flex-col p-6 gap-2 lg:hidden"
-          >
-            {navLinks.map((link, i) => (
-              <motion.div
-                key={link.name}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.05 }}
-              >
-                <Link 
-                  href={link.href} 
-                  onClick={() => setMobileMenuOpen(false)} 
-                  className="block p-4 text-xl font-heading font-bold rounded-2xl hover:bg-white/60 transition-colors"
+          <>
+            {/* Backdrop overlay */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="fixed inset-0 z-[-1] bg-black/10 backdrop-blur-md lg:hidden"
+              onClick={() => setMobileMenuOpen(false)}
+            />
+            {/* Menu card */}
+            <motion.div
+              initial={{ opacity: 0, y: -15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="absolute top-[calc(100%+1rem)] left-4 right-4 bg-white/85 backdrop-blur-xl border border-white/50 shadow-2xl rounded-3xl flex flex-col p-6 gap-2 lg:hidden z-10"
+            >
+              {navLinks.map((link, i) => (
+                <motion.div
+                  key={link.name}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.05, duration: 0.3 }}
                 >
-                  {link.name}
-                </Link>
-              </motion.div>
-            ))}
-            <hr className="my-4 border-black/10" />
-            <Link href="/#contact" onClick={() => setMobileMenuOpen(false)} className="bg-black text-white px-6 py-4 rounded-full text-center font-bold text-lg">
-              Visit Store
-            </Link>
-          </motion.div>
+                  <Link 
+                    href={link.href} 
+                    onClick={(e) => {
+                      if (link.href.startsWith('/#')) {
+                        const id = link.href.split('#')[1];
+                        const el = document.getElementById(id);
+                        if (el) {
+                          e.preventDefault();
+                          setMobileMenuOpen(false);
+                          el.scrollIntoView({ behavior: 'smooth' });
+                          window.history.pushState(null, '', link.href);
+                          return;
+                        }
+                      }
+                      setMobileMenuOpen(false);
+                    }} 
+                    className="block p-4 text-xl font-heading font-bold rounded-2xl hover:bg-white/60 transition-colors"
+                  >
+                    {link.name}
+                  </Link>
+                </motion.div>
+              ))}
+              <hr className="my-4 border-black/10" />
+              <Link 
+                href="/#contact" 
+                onClick={(e) => {
+                  const el = document.getElementById('contact');
+                  if (el) {
+                    e.preventDefault();
+                    setMobileMenuOpen(false);
+                    el.scrollIntoView({ behavior: 'smooth' });
+                    window.history.pushState(null, '', '/#contact');
+                    return;
+                  }
+                  setMobileMenuOpen(false);
+                }} 
+                className="bg-black text-white px-6 py-4 rounded-full text-center font-bold text-lg"
+              >
+                Visit Store
+              </Link>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </header>
