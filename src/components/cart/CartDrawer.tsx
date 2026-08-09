@@ -167,6 +167,14 @@ export default function CartDrawer() {
                   <span className="text-sm text-gray-500 font-medium">Subtotal</span>
                   <span className="font-heading text-2xl font-extrabold text-black">{formatPrice(subtotal)}</span>
                 </div>
+                
+                <div className="text-sm font-medium text-gray-700 bg-[var(--color-brand-gray)] rounded-xl px-4 py-3 flex items-center gap-2">
+                  {subtotal >= 1499 ? (
+                    <><span>✅</span> Delivery available</>
+                  ) : (
+                    <><span>🚚</span> Delivery available above ₹1499</>
+                  )}
+                </div>
 
                 {step === "cart" ? (
                   <button
