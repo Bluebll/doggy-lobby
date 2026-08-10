@@ -4,6 +4,7 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { createClient } from '@supabase/supabase-js'
 import { getSupabaseAdmin } from '@/lib/supabase/admin'
+import { requireAdminAuth } from '@/lib/utils/admin-auth'
 
 const getAuthClient = () => {
   return createClient(
@@ -51,6 +52,7 @@ export async function logoutAction() {
 }
 
 export async function uploadImageAction(formData: FormData): Promise<{ url?: string; error?: string }> {
+  await requireAdminAuth()
   const file = formData.get('file') as File
   if (!file) return { error: 'No file provided' }
 
@@ -86,6 +88,7 @@ export async function uploadImageAction(formData: FormData): Promise<{ url?: str
 }
 
 export async function generateUniqueSlug(name: string): Promise<string> {
+  await requireAdminAuth()
   const supabase = getSupabaseAdmin()
   const baseSlug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')
   let slug = baseSlug
@@ -107,6 +110,7 @@ export async function generateUniqueSlug(name: string): Promise<string> {
 }
 
 export async function createProductAction(formData: FormData): Promise<{ error?: string }> {
+  await requireAdminAuth()
   const supabase = getSupabaseAdmin()
   
   const name = formData.get('name') as string
@@ -141,6 +145,7 @@ export async function createProductAction(formData: FormData): Promise<{ error?:
 }
 
 export async function updateProductAction(id: string, formData: FormData): Promise<{ error?: string }> {
+  await requireAdminAuth()
   const supabase = getSupabaseAdmin()
   
   const name = formData.get('name') as string
@@ -172,6 +177,7 @@ export async function updateProductAction(id: string, formData: FormData): Promi
 }
 
 export async function deactivateProductAction(id: string): Promise<{ error?: string }> {
+  await requireAdminAuth()
   const supabase = getSupabaseAdmin()
   const { error } = await supabase.from('products').update({ is_active: false }).eq('id', id)
   if (error) return { error: error.message }

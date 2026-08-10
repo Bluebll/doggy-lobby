@@ -2,6 +2,7 @@
 
 import { getSupabaseAdmin } from '@/lib/supabase/admin'
 import { generateUniqueSlug } from '@/app/admin/actions'
+import { requireAdminAuth } from '@/lib/utils/admin-auth'
 
 export type ProductImportRow = {
   name: string
@@ -15,6 +16,7 @@ export type ProductImportRow = {
 
 export async function bulkImportProductsAction(products: ProductImportRow[]): Promise<{ error?: string, count?: number }> {
   try {
+    await requireAdminAuth()
     const supabase = getSupabaseAdmin()
     
     // We need to generate a unique slug for each product.
