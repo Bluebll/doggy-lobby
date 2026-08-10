@@ -125,6 +125,30 @@ export async function createProductAction(formData: FormData): Promise<{ error?:
   const isActive = formData.get('is_active') === 'on'
   const imageUrls = formData.getAll('image_urls') as string[]
 
+  let salePrice: number | null = null
+  if (formData.has('sale_price')) {
+    const spRaw = formData.get('sale_price') as string
+    if (spRaw && spRaw.trim() !== '') {
+      salePrice = parseFloat(spRaw)
+      if (isNaN(salePrice) || salePrice < 0) return { error: 'Invalid sale price' }
+    }
+  }
+
+  let structuredInfo: Record<string, string> | null = null
+  if (formData.has('structured_info')) {
+    const siRaw = formData.get('structured_info') as string
+    if (siRaw && siRaw.trim() !== '') {
+      try {
+        const parsed = JSON.parse(siRaw)
+        if (Object.keys(parsed).length > 0) {
+          structuredInfo = parsed
+        }
+      } catch {
+        // ignore
+      }
+    }
+  }
+
   if (!name || name.trim() === '') return { error: 'Name is required' }
   if (isNaN(price) || price < 0) return { error: 'Invalid price' }
   if (isNaN(stock) || stock < 0) return { error: 'Invalid stock' }
@@ -137,9 +161,11 @@ export async function createProductAction(formData: FormData): Promise<{ error?:
     name,
     description,
     price,
+    sale_price: salePrice,
     stock,
     collection,
     image_urls: imageUrls,
+    structured_info: structuredInfo,
     is_active: isActive
   })
 
@@ -165,7 +191,8 @@ export async function updateProductAction(id: string, formData: FormData): Promi
   if (isNaN(stock) || stock < 0) return { error: 'Invalid stock' }
   if (!collection) return { error: 'Collection is required' }
 
-  const { error } = await supabase.from('products').update({
+  // Build update payload dynamically to avoid removing existing fields
+  const updatePayload: Record<string, unknown> = {
     name,
     description,
     price,
@@ -173,7 +200,38 @@ export async function updateProductAction(id: string, formData: FormData): Promi
     collection,
     image_urls: imageUrls,
     is_active: isActive
-  }).eq('id', id)
+  }
+
+  if (formData.has('sale_price')) {
+    const spRaw = formData.get('sale_price') as string
+    if (spRaw && spRaw.trim() !== '') {
+      const parsedSp = parseFloat(spRaw)
+      if (isNaN(parsedSp) || parsedSp < 0) return { error: 'Invalid sale price' }
+      updatePayload.sale_price = parsedSp
+    } else {
+      updatePayload.sale_price = null
+    }
+  }
+
+  if (formData.has('structured_info')) {
+    const siRaw = formData.get('structured_info') as string
+    if (siRaw && siRaw.trim() !== '') {
+      try {
+        const parsed = JSON.parse(siRaw)
+        if (Object.keys(parsed).length > 0) {
+          updatePayload.structured_info = parsed
+        } else {
+          updatePayload.structured_info = null
+        }
+      } catch {
+        updatePayload.structured_info = null
+      }
+    } else {
+      updatePayload.structured_info = null
+    }
+  }
+
+  const { error } = await supabase.from('products').update(updatePayload).eq('id', id)
 
   if (error) return { error: error.message }
 

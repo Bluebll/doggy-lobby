@@ -12,6 +12,8 @@ type Product = {
   brand: string;
   desc: string;
   price: string;
+  sale_price: string | null;
+  discount: number | null;
   image: string;
   tag: string;
   category: string;
@@ -19,9 +21,9 @@ type Product = {
 
 function ProductCard({ product }: { product: Product }) {
   const [isHovered, setIsHovered] = useState(false)
-  
+
   return (
-    <motion.div 
+    <motion.div
       className="w-[300px] md:w-[400px] h-[550px] md:h-[600px] flex flex-col group cursor-pointer bg-white rounded-[var(--radius-3xl)] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-black/5"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -33,35 +35,50 @@ function ProductCard({ product }: { product: Product }) {
             {product.tag}
           </div>
         )}
-        
-        <motion.img 
-          src={product.image} 
+
+        {product.discount !== null && (
+          <div className="absolute top-4 right-4 z-20 bg-red-600 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider text-white shadow-sm">
+            {product.discount}% OFF
+          </div>
+        )}
+
+        <motion.img
+          src={product.image}
           alt={product.name}
           className="absolute inset-0 w-full h-full object-cover z-10"
           animate={{ scale: isHovered ? 1.05 : 1 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
         />
       </div>
-      
+
       {/* Content Container */}
       <div className="flex flex-col flex-1 p-6 md:p-8 bg-white relative">
         <div className="flex justify-between items-start mb-2">
           <p className="text-[var(--color-brand-orange)] text-xs font-bold tracking-widest uppercase">{product.brand}</p>
           <p className="text-gray-400 text-xs font-semibold tracking-wider uppercase">{product.category}</p>
         </div>
-        
+
         <h4 className="font-heading font-extrabold text-xl md:text-2xl text-black leading-snug mb-3">
           {product.name}
         </h4>
-        
+
         <p className="text-gray-500 text-sm md:text-base leading-relaxed mb-auto line-clamp-2">
           {product.desc}
         </p>
-        
+
         <div className="flex items-center justify-between mt-6 pt-6 border-t border-gray-100">
-          <p className="font-heading font-extrabold text-2xl text-black">{product.price}</p>
-          
-          <button 
+          <div className="flex items-center gap-2">
+            {product.sale_price ? (
+              <>
+                <p className="font-heading font-extrabold text-2xl text-[var(--color-brand-orange)]">{product.sale_price}</p>
+                <p className="font-bold text-gray-400 line-through text-sm">{product.price}</p>
+              </>
+            ) : (
+              <p className="font-heading font-extrabold text-2xl text-black">{product.price}</p>
+            )}
+          </div>
+
+          <button
             className="w-12 h-12 rounded-full bg-black text-white flex items-center justify-center group-hover:bg-[var(--color-brand-orange)] transition-colors duration-300"
             aria-label={`Add ${product.name} to cart`}
           >
@@ -105,24 +122,31 @@ export default function FeaturedProducts() {
       try {
         const supabase = await getSupabaseServer()
         if (supabase) {
-          const { data } = await supabase.from('products').select('id, name, description, price, image_urls, is_active').eq('is_active', true)
+          const { data } = await supabase.from('products').select('id, name, description, price, sale_price, image_urls, is_active').eq('is_active', true)
           if (data && data.length > 0) {
             setDisplayProducts(data.map((p: {
               id: string;
               name: string;
               description: string | null;
-              price: number | string;
+              price: number;
+              sale_price: number | null;
               image_urls: string[] | null;
               is_active: boolean;
-            }) => ({
-              name: p.name,
-              brand: "Doggy Lobby",
-              desc: p.description || "",
-              price: `₹${p.price}`,
-              image: p.image_urls?.[0] || "",
-              tag: "",
-              category: "Products"
-            })))
+            }) => {
+              const hasSale = p.sale_price !== null && p.sale_price < p.price;
+              const discount = hasSale ? Math.round(((p.price - p.sale_price!) / p.price) * 100) : null;
+              return {
+                name: p.name,
+                brand: "Doggy Lobby",
+                desc: p.description || "",
+                price: `₹${p.price}`,
+                sale_price: hasSale ? `₹${p.sale_price}` : null,
+                discount: discount,
+                image: p.image_urls?.[0] || "",
+                tag: "",
+                category: "Products"
+              }
+            }))
           }
         }
       } catch (err) {
@@ -175,7 +199,7 @@ export default function FeaturedProducts() {
             No featured products available at the moment. Check back soon!
           </div>
         ) : (
-          <div 
+          <div
             className="flex gap-6 md:gap-8 overflow-x-auto snap-x snap-mandatory pb-16 pr-6 md:pr-12 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] cursor-grab active:cursor-grabbing"
           >
             {displayProducts.map((product, idx) => (

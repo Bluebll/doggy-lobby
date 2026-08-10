@@ -22,13 +22,13 @@ function generateOrderNumber() {
   const yyyy = date.getFullYear()
   const mm = String(date.getMonth() + 1).padStart(2, "0")
   const dd = String(date.getDate()).padStart(2, "0")
-  
+
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
   let randomCode = ""
   for (let i = 0; i < 6; i++) {
     randomCode += chars.charAt(Math.floor(Math.random() * chars.length))
   }
-  
+
   return `DL-${yyyy}${mm}${dd}-${randomCode}`
 }
 
@@ -49,7 +49,7 @@ export async function POST(req: Request) {
     const ids = body.items.map((i) => Number(i.id))
     const { data: rows, error: prodErr } = await supabase
       .from("products")
-      .select("id,name,price,image_urls,slug,is_active,stock")
+      .select("id,name,price,sale_price,image_urls,slug,is_active,stock")
       .in("id", ids)
 
     if (prodErr) return NextResponse.json({ error: prodErr.message }, { status: 500 })
@@ -59,10 +59,16 @@ export async function POST(req: Request) {
       .map((i) => {
         const p = byId.get(Number(i.id))
         if (!p || !p.is_active) return null
+
+        // Authoritative price calculation
+        const authoritativePrice = (p.sale_price !== null && p.sale_price < p.price)
+          ? Number(p.sale_price)
+          : Number(p.price);
+
         return {
           id: p.id,
           name: p.name,
-          price: Number(p.price),
+          price: authoritativePrice,
           quantity: Math.max(1, Math.floor(i.quantity)),
           stock: p.stock,
           image: (p.image_urls && p.image_urls[0]) || undefined,
@@ -111,14 +117,14 @@ export async function POST(req: Request) {
     }))
 
     const { error: itemsErr } = await supabase.from("order_items").insert(orderItems)
-    
+
     if (itemsErr) return NextResponse.json({ error: itemsErr.message }, { status: 500 })
 
     // Decrease stock using Optimistic Concurrency Control (OCC)
     for (const item of snapshot) {
       let success = false;
       let retries = 3;
-      
+
       while (retries > 0 && !success) {
         // Fetch latest stock immediately before update
         const { data: latest } = await supabase
@@ -126,7 +132,7 @@ export async function POST(req: Request) {
           .select("stock")
           .eq("id", item.id)
           .single();
-          
+
         if (!latest || latest.stock < item.quantity) {
           // Fallback if someone else bought the last item during our checkout process
           return NextResponse.json({ error: `Not enough stock for ${item.name}. Only ${latest?.stock || 0} left.` }, { status: 400 });
@@ -139,14 +145,14 @@ export async function POST(req: Request) {
           .eq("id", item.id)
           .eq("stock", latest.stock) // only update if stock matches our latest read
           .select("id");
-          
+
         if (updated && updated.length > 0) {
           success = true;
         } else {
           retries--;
         }
       }
-      
+
       if (!success) {
         // If we fail 3 times due to immense concurrent load on the exact same product, we fail gracefully
         return NextResponse.json({ error: `High traffic. Could not process ${item.name}. Please try again.` }, { status: 409 });

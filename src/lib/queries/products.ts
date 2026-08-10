@@ -8,6 +8,8 @@ export interface Product {
   price: number;
   stock: number;
   image_urls: string[] | null;
+  sale_price?: number | null;
+  structured_info?: Record<string, string> | null;
 }
 
 export async function queryProducts(filter: { q?: string } = {}) {

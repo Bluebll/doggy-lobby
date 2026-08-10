@@ -15,6 +15,7 @@ interface CartStore {
   addToCart: (item: CartItem) => void
   removeFromCart: (id: number) => void
   decreaseQuantity: (id: number) => void
+  updateQuantity: (id: number, quantity: number) => void
   clearCart: () => void
 }
 
@@ -26,17 +27,18 @@ export const useCart = create<CartStore>()(
         set((state) => {
           const existing = state.items.find((i) => i.id === item.id)
           if (existing) {
+            const addedQty = item.quantity || 1
             if (existing.quantity >= existing.stock) {
               return state // Cannot exceed stock
             }
             return {
               items: state.items.map((i) =>
-                i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
+                i.id === item.id ? { ...i, quantity: Math.min(i.stock, i.quantity + addedQty) } : i
               ),
             }
           }
           // Default stock if missing from older carts, though new additions will have it
-          return { items: [...state.items, { ...item, stock: item.stock ?? 999 }] }
+          return { items: [...state.items, { ...item, quantity: item.quantity || 1, stock: item.stock ?? 999 }] }
         }),
       removeFromCart: (id) =>
         set((state) => ({
@@ -57,6 +59,18 @@ export const useCart = create<CartStore>()(
             }
           }
           return { items: state.items }
+        }),
+      updateQuantity: (id, quantity) =>
+        set((state) => {
+          return {
+            items: state.items.map((i) => {
+              if (i.id === id) {
+                const newQuantity = Math.max(1, Math.min(quantity, i.stock))
+                return { ...i, quantity: newQuantity }
+              }
+              return i
+            }),
+          }
         }),
       clearCart: () => set({ items: [] }),
     }),

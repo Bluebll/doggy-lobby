@@ -18,6 +18,7 @@ interface CollectionProduct {
   slug: string;
   name: string;
   price: number;
+  sale_price?: number | null;
   image_urls?: string[] | null;
 }
 
@@ -28,7 +29,7 @@ export default async function CollectionPage({ params }: { params: Promise<{ typ
   
   let query = supabase
     .from('products')
-    .select('id, slug, name, price, image_urls')
+    .select('id, slug, name, price, sale_price, image_urls')
     .eq('is_active', true)
     
   if (type !== 'all') {
@@ -52,14 +53,30 @@ export default async function CollectionPage({ params }: { params: Promise<{ typ
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {products.map((p) => (
-              <Link href={`/products/${p.slug}`} key={p.id} className="border rounded-lg p-4 hover:shadow-lg">
-                {p.image_urls && p.image_urls.length > 0 ? (
-                  <SafeImage src={p.image_urls[0]} alt={p.name} className="w-full h-48 object-contain bg-white rounded mb-4" />
-                ) : (
-                  <div className="bg-gray-100 h-48 rounded mb-4"></div>
+              <Link href={`/products/${p.slug}`} key={p.id} className="border rounded-lg p-4 hover:shadow-lg relative group">
+                {p.sale_price && p.sale_price < p.price && (
+                  <div className="absolute top-6 left-6 z-10 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full shadow-sm">
+                    {Math.round(((p.price - p.sale_price) / p.price) * 100)}% OFF
+                  </div>
                 )}
-                <h2 className="font-bold">{p.name}</h2>
-                <p className="text-orange-600 font-bold">₹{p.price}</p>
+                <div className="relative">
+                  {p.image_urls && p.image_urls.length > 0 ? (
+                    <SafeImage src={p.image_urls[0]} alt={p.name} className="w-full h-48 object-contain bg-white rounded mb-4" />
+                  ) : (
+                    <div className="bg-gray-100 h-48 rounded mb-4"></div>
+                  )}
+                </div>
+                <h2 className="font-bold group-hover:text-orange-600 transition-colors">{p.name}</h2>
+                <div className="flex items-center gap-2 mt-1">
+                  {p.sale_price && p.sale_price < p.price ? (
+                    <>
+                      <p className="text-orange-600 font-bold">₹{p.sale_price}</p>
+                      <p className="text-gray-400 font-bold text-sm line-through">₹{p.price}</p>
+                    </>
+                  ) : (
+                    <p className="text-orange-600 font-bold">₹{p.price}</p>
+                  )}
+                </div>
               </Link>
             ))}
           </div>

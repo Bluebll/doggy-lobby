@@ -14,6 +14,8 @@ type Product = {
   collection?: string
   image_urls?: string[]
   is_active?: boolean
+  sale_price?: number | null
+  structured_info?: Record<string, string> | null
 }
 
 export default function ProductForm({ product, isEdit }: { product?: Product, isEdit?: boolean }) {
@@ -23,6 +25,12 @@ export default function ProductForm({ product, isEdit }: { product?: Product, is
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const [structuredInfo, setStructuredInfo] = useState<{ key: string, value: string }[]>(
+    product?.structured_info
+      ? Object.entries(product.structured_info).map(([k, v]) => ({ key: k, value: v }))
+      : [{ key: '', value: '' }]
+  )
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
@@ -35,7 +43,7 @@ export default function ProductForm({ product, isEdit }: { product?: Product, is
         const file = files[i]
         const formData = new FormData()
         formData.append('file', file)
-        
+
         const res = await uploadImageAction(formData)
         if (res.error) {
           setError(res.error)
@@ -58,7 +66,7 @@ export default function ProductForm({ product, isEdit }: { product?: Product, is
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    
+
     const formData = new FormData(e.currentTarget)
 
     setIsSubmitting(true)
@@ -84,8 +92,16 @@ export default function ProductForm({ product, isEdit }: { product?: Product, is
     }
 
     // Add all current images to formData
-    // Add all current images to formData
     images.forEach(url => formData.append('image_urls', url))
+
+    // Add structured info as JSON string
+    const infoObject = structuredInfo.reduce((acc, curr) => {
+      if (curr.key.trim() && curr.value.trim()) {
+        acc[curr.key.trim()] = curr.value.trim()
+      }
+      return acc
+    }, {} as Record<string, string>)
+    formData.append('structured_info', JSON.stringify(infoObject))
 
     try {
       let res
@@ -155,7 +171,7 @@ export default function ProductForm({ product, isEdit }: { product?: Product, is
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Price (₹)</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Regular Price (₹)</label>
             <input
               type="number"
               name="price"
@@ -163,6 +179,18 @@ export default function ProductForm({ product, isEdit }: { product?: Product, is
               min="0"
               step="0.01"
               required
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-black focus:border-black outline-none transition-all text-black"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Sale Price (₹) - Optional</label>
+            <input
+              type="number"
+              name="sale_price"
+              defaultValue={product?.sale_price || ''}
+              min="0"
+              step="0.01"
               className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-black focus:border-black outline-none transition-all text-black"
             />
           </div>
@@ -210,10 +238,60 @@ export default function ProductForm({ product, isEdit }: { product?: Product, is
 
         <hr className="border-gray-200" />
 
+        {/* Structured Information Section */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-4">Structured Product Information</label>
+          <p className="text-xs text-gray-500 mb-4">Add useful fields such as Suitable For, Life Stage, Weight, Brand, Category, Key Benefits.</p>
+          <div className="space-y-3">
+            {structuredInfo.map((info, idx) => (
+              <div key={idx} className="flex gap-2 items-center">
+                <input
+                  type="text"
+                  placeholder="e.g. Life Stage"
+                  value={info.key}
+                  onChange={(e) => {
+                    const newInfo = [...structuredInfo]
+                    newInfo[idx].key = e.target.value
+                    setStructuredInfo(newInfo)
+                  }}
+                  className="w-1/3 px-4 py-2 rounded-xl border border-gray-200 focus:ring-2 focus:ring-black focus:border-black outline-none transition-all text-black text-sm"
+                />
+                <input
+                  type="text"
+                  placeholder="e.g. Adult Dogs"
+                  value={info.value}
+                  onChange={(e) => {
+                    const newInfo = [...structuredInfo]
+                    newInfo[idx].value = e.target.value
+                    setStructuredInfo(newInfo)
+                  }}
+                  className="flex-1 px-4 py-2 rounded-xl border border-gray-200 focus:ring-2 focus:ring-black focus:border-black outline-none transition-all text-black text-sm"
+                />
+                <button
+                  type="button"
+                  onClick={() => setStructuredInfo(prev => prev.filter((_, i) => i !== idx))}
+                  className="p-2 text-gray-400 hover:text-red-500 transition-colors"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+            ))}
+          </div>
+          <button
+            type="button"
+            onClick={() => setStructuredInfo(prev => [...prev, { key: '', value: '' }])}
+            className="mt-4 px-4 py-2 text-sm font-semibold text-black bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors"
+          >
+            + Add Field
+          </button>
+        </div>
+
+        <hr className="border-gray-200" />
+
         {/* Image Upload Section */}
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-4">Product Images (Max 5MB per image)</label>
-          
+
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-4">
             {images.map((url, idx) => (
               <div key={idx} className="relative aspect-square rounded-xl overflow-hidden border border-gray-200 group bg-gray-50">
@@ -227,7 +305,7 @@ export default function ProductForm({ product, isEdit }: { product?: Product, is
                 </button>
               </div>
             ))}
-            
+
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
