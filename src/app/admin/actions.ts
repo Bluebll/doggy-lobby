@@ -23,24 +23,28 @@ export async function loginAction(prevState: { error?: string } | undefined, for
 
   const supabase = getAuthClient()
   
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  })
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
 
-  if (error || !data.session) {
-    return { error: error?.message || 'Failed to authenticate' }
+    if (error || !data.session) {
+      return { error: error?.message || 'Failed to authenticate' }
+    }
+
+    // Set auth cookie
+    const cookieStore = await cookies()
+    cookieStore.set('admin_auth', data.session.access_token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24 // 1 day
+    })
+  } catch {
+    return { error: 'Failed to communicate with authentication service. Please try again.' }
   }
-
-  // Set auth cookie
-  const cookieStore = await cookies()
-  cookieStore.set('admin_auth', data.session.access_token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
-    path: '/',
-    maxAge: 60 * 60 * 24 // 1 day
-  })
 
   redirect('/admin/orders')
 }

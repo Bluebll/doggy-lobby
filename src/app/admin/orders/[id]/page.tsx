@@ -11,15 +11,18 @@ async function updateOrderStatus(formData: FormData) {
   const orderId = formData.get('orderId') as string
   const status = formData.get('status') as string
   
-  const supabase = getSupabaseAdmin()
-  const { error } = await supabase
-    .from('orders')
-    .update({ status })
-    .eq('id', orderId)
-    
-  if (error) {
-    console.error('Failed to update status:', error)
-    throw new Error('Failed to update status')
+  try {
+    const supabase = getSupabaseAdmin()
+    const { error } = await supabase
+      .from('orders')
+      .update({ status })
+      .eq('id', orderId)
+      
+    if (error) {
+      throw new Error('Database error')
+    }
+  } catch {
+    throw new Error('Failed to update order status. Please try again.')
   }
   
   revalidatePath(`/admin/orders/${orderId}`)
