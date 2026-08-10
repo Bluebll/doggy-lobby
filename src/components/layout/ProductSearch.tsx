@@ -45,6 +45,8 @@ export default function ProductSearch({ className = "" }: { className?: string }
       return
     }
 
+    let isCurrent = true
+
     const searchTimer = setTimeout(async () => {
       setIsSearching(true)
       const term = `%${query.trim()}%`
@@ -54,6 +56,8 @@ export default function ProductSearch({ className = "" }: { className?: string }
         .eq("is_active", true)
         .or(`name.ilike.${term},collection.ilike.${term}`)
         .limit(5)
+
+      if (!isCurrent) return
 
       if (!error && data) {
         setResults(data)
@@ -66,7 +70,10 @@ export default function ProductSearch({ className = "" }: { className?: string }
       setIsSearching(false)
     }, 300)
 
-    return () => clearTimeout(searchTimer)
+    return () => {
+      isCurrent = false
+      clearTimeout(searchTimer)
+    }
   }, [query])
 
   return (

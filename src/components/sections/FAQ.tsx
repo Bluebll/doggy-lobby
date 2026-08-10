@@ -50,7 +50,8 @@ export default function FAQ() {
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top 75%",
-        }
+        },
+        clearProps: "all"
       }
     )
   }, [])
@@ -73,7 +74,7 @@ export default function FAQ() {
           {faqs.map((faq, index) => (
             <div 
               key={index} 
-              className={`rounded-[var(--radius-3xl)] overflow-hidden border transition-all duration-300 ${
+              className={`rounded-[var(--radius-3xl)] border transition-all duration-300 ${
                 openIndex === index 
                   ? 'border-[var(--color-brand-orange)]/30 bg-white shadow-md' 
                   : 'border-gray-100 bg-[var(--color-brand-gray)]/50 hover:bg-[var(--color-brand-gray)]'
@@ -114,7 +115,7 @@ export default function FAQ() {
       </div>
       
       {/* Abstract Background Elements */}
-      <div className="absolute left-0 bottom-0 w-[500px] h-[500px] bg-[var(--color-brand-orange)]/5 rounded-full blur-[100px] -translate-x-1/2 translate-y-1/2 pointer-events-none"></div>
+      <div className="absolute left-0 top-[20rem] w-[500px] h-[500px] bg-[var(--color-brand-orange)]/5 rounded-full blur-[100px] -translate-x-1/2 translate-y-1/2 pointer-events-none"></div>
     </section>
   )
 }

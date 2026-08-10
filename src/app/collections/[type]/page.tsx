@@ -10,6 +10,7 @@ const collectionNames: Record<string, string> = {
   'puppies': 'Puppies',
   'kittens': 'Kittens',
   'other-pets': 'Other Pets',
+  'all': 'All Products',
 }
 
 interface CollectionProduct {
@@ -25,16 +26,21 @@ export default async function CollectionPage({ params }: { params: Promise<{ typ
   const supabase = await getSupabaseServer()
   if (!supabase) return <div>Error loading collection</div>
   
-  const { data: products } = await supabase
+  let query = supabase
     .from('products')
     .select('id, slug, name, price, image_urls')
-    .eq('collection', type)
-    .eq('is_active', true).returns<CollectionProduct[]>()
+    .eq('is_active', true)
+    
+  if (type !== 'all') {
+    query = query.eq('collection', type)
+  }
+  
+  const { data: products } = await query.returns<CollectionProduct[]>()
   
   const collectionName = collectionNames[type] || type
 
   return (
-    <div className="min-h-screen bg-white pt-40 px-4 md:px-8 pb-8">
+    <div className="min-h-[100dvh] bg-white pt-40 px-4 md:px-8 pb-8">
       <div className="max-w-6xl mx-auto">
         <div className="flex gap-2 mb-4 relative z-10">
           <BackButton />

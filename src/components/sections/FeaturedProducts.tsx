@@ -73,6 +73,28 @@ function ProductCard({ product }: { product: Product }) {
   )
 }
 
+function LazyProductCard({ product }: { product: Product }) {
+  const [inView, setInView] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setInView(true)
+        observer.disconnect()
+      }
+    }, { rootMargin: '600px' })
+    if (ref.current) observer.observe(ref.current)
+    return () => observer.disconnect()
+  }, [])
+
+  return (
+    <div ref={ref} className="w-[300px] md:w-[400px] h-[550px] md:h-[600px]">
+      {inView ? <ProductCard product={product} /> : null}
+    </div>
+  )
+}
+
 export default function FeaturedProducts() {
   const containerRef = useRef<HTMLDivElement>(null)
   const textRef = useRef<HTMLDivElement>(null)
@@ -158,7 +180,7 @@ export default function FeaturedProducts() {
           >
             {displayProducts.map((product, idx) => (
               <div key={idx} className="snap-center md:snap-start shrink-0">
-                <ProductCard product={product} />
+                <LazyProductCard product={product} />
               </div>
             ))}
           </div>

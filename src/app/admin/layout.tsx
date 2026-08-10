@@ -16,26 +16,26 @@ export default async function AdminLayout({
       {authCookie && (
         <nav className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between h-16">
-              <div className="flex items-center">
-                <Link href="/admin/orders" className="text-xl font-bold tracking-tight text-gray-900">
-                  Doggy Lobby Admin
-                </Link>
-                <div className="hidden sm:ml-10 sm:flex sm:space-x-8">
-                  <Link href="/admin/orders" className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors">
-                    Orders
-                  </Link>
-                  <Link href="/admin/products" className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors">
-                    Products
-                  </Link>
-                </div>
-              </div>
-              <div className="flex items-center">
+            <div className="flex flex-wrap justify-between items-center py-3 sm:py-0 sm:h-16">
+              <Link href="/admin/orders" className="text-xl font-bold tracking-tight text-gray-900 order-1 shrink-0">
+                Doggy Lobby Admin
+              </Link>
+              
+              <div className="flex items-center order-2 sm:order-3 shrink-0">
                 <form action={logoutAction}>
-                  <button type="submit" className="text-gray-500 hover:text-gray-900 text-sm font-medium px-4 py-2 border border-transparent rounded-md hover:bg-gray-100 transition-colors">
+                  <button type="submit" className="text-gray-500 hover:text-gray-900 text-sm font-medium px-2 sm:px-4 py-2 border border-transparent rounded-md hover:bg-gray-100 transition-colors">
                     Logout
                   </button>
                 </form>
+              </div>
+
+              <div className="flex space-x-6 sm:space-x-8 mt-3 sm:mt-0 w-full sm:w-auto order-3 sm:order-2 sm:ml-10 sm:mr-auto border-t sm:border-t-0 pt-3 sm:pt-0 border-gray-100">
+                <Link href="/admin/orders" className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors">
+                  Orders
+                </Link>
+                <Link href="/admin/products" className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors">
+                  Products
+                </Link>
               </div>
             </div>
           </div>

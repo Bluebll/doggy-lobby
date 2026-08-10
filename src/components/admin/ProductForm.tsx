@@ -98,7 +98,8 @@ export default function ProductForm({ product, isEdit }: { product?: Product, is
       if (res?.error) {
         setError(res.error)
       } else {
-        router.refresh() // Actually, the action redirects, so we might not hit this if successful
+        router.push('/admin/products')
+        router.refresh()
       }
     } catch (err: unknown) {
       const e = err as Error
@@ -253,12 +254,12 @@ export default function ProductForm({ product, isEdit }: { product?: Product, is
           </div>
         </div>
 
-        <div className="pt-6 flex items-center justify-end gap-4 border-t border-gray-200">
+        <div className="pt-6 flex flex-col sm:flex-row items-stretch sm:items-center sm:justify-end gap-4 border-t border-gray-200">
           {isEdit && product?.is_active && (
             <button
               type="button"
               onClick={handleDeactivate}
-              className="mr-auto px-6 py-3 text-sm font-bold text-red-600 hover:text-red-700 hover:bg-red-50 rounded-xl transition-colors"
+              className="sm:mr-auto px-6 py-3 text-sm font-bold text-red-600 hover:text-red-700 hover:bg-red-50 rounded-xl transition-colors"
             >
               Deactivate
             </button>
@@ -273,7 +274,7 @@ export default function ProductForm({ product, isEdit }: { product?: Product, is
           <button
             type="submit"
             disabled={isSubmitting || isUploading}
-            className="px-8 py-3 text-sm font-bold text-white bg-black hover:bg-gray-800 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            className="px-8 py-3 text-sm font-bold text-white bg-black hover:bg-gray-800 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {isSubmitting ? (
               <><Loader2 className="animate-spin" size={16} /> Saving...</>

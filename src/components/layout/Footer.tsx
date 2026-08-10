@@ -1,3 +1,5 @@
+"use client"
+
 import Link from "next/link"
 import { MapPin, Phone, Mail, ArrowUpRight, Star } from "lucide-react"
 
@@ -52,15 +54,15 @@ export default function Footer() {
             <div className="flex items-center justify-between mb-6">
               <h4 className="font-heading font-bold text-xl flex items-center gap-2">
                 <InstagramIcon size={20} className="text-[var(--color-brand-orange)]" />
-                @doggylobby.in
+                @doggylobbypetshop
               </h4>
-              <a href="#" className="text-sm font-semibold text-[#a1a1aa] hover:text-white transition-colors flex items-center gap-1">
+              <a href="https://www.instagram.com/doggylobbypetshop" target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-[#a1a1aa] hover:text-white transition-colors flex items-center gap-1">
                 Follow Us <ArrowUpRight size={14} />
               </a>
             </div>
             <div className="grid grid-cols-4 gap-3">
               {igPosts.map((post, i) => (
-                <a href="#" key={i} className="aspect-square rounded-2xl overflow-hidden group relative">
+                <a href="https://www.instagram.com/doggylobbypetshop" target="_blank" rel="noopener noreferrer" key={i} className="aspect-square rounded-2xl overflow-hidden group relative">
                   <img src={post} alt={`Instagram post ${i+1}`} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                   <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                     <InstagramIcon className="text-white" size={24} />
@@ -100,10 +102,41 @@ export default function Footer() {
           <div>
             <h4 className="font-heading font-bold text-white mb-6">Explore</h4>
             <ul className="space-y-4 text-[#a1a1aa]">
-              <li><Link href="/#collections" className="hover:text-white transition-colors flex items-center gap-1 group">Shop All <ArrowUpRight size={14} className="opacity-0 -translate-y-1 translate-x-1 group-hover:opacity-100 group-hover:translate-y-0 group-hover:translate-x-0 transition-all" /></Link></li>
-              <li><Link href="/#about" className="hover:text-white transition-colors flex items-center gap-1 group">Our Story <ArrowUpRight size={14} className="opacity-0 -translate-y-1 translate-x-1 group-hover:opacity-100 group-hover:translate-y-0 group-hover:translate-x-0 transition-all" /></Link></li>
-              <li><Link href="/#faq" className="hover:text-white transition-colors flex items-center gap-1 group">FAQ <ArrowUpRight size={14} className="opacity-0 -translate-y-1 translate-x-1 group-hover:opacity-100 group-hover:translate-y-0 group-hover:translate-x-0 transition-all" /></Link></li>
-              <li><Link href="#" className="hover:text-white transition-colors flex items-center gap-1 group">Journal <ArrowUpRight size={14} className="opacity-0 -translate-y-1 translate-x-1 group-hover:opacity-100 group-hover:translate-y-0 group-hover:translate-x-0 transition-all" /></Link></li>
+              <li><Link href="/#collections" onClick={(e) => {
+                if (window.location.pathname === '/') {
+                  const el = document.getElementById('collections');
+                  if (el) {
+                    e.preventDefault();
+                    el.scrollIntoView({ behavior: 'smooth' });
+                    window.history.pushState(null, '', '/#collections');
+                  }
+                }
+              }} className="hover:text-white transition-colors flex items-center gap-1 group">Shop All <ArrowUpRight size={14} className="opacity-0 -translate-y-1 translate-x-1 group-hover:opacity-100 group-hover:translate-y-0 group-hover:translate-x-0 transition-all" /></Link></li>
+              <li><Link href="/#about" onClick={(e) => {
+                if (window.location.pathname === '/') {
+                  const el = document.getElementById('about');
+                  if (el) {
+                    e.preventDefault();
+                    el.scrollIntoView({ behavior: 'smooth' });
+                    window.history.pushState(null, '', '/#about');
+                  }
+                }
+              }} className="hover:text-white transition-colors flex items-center gap-1 group">Our Story <ArrowUpRight size={14} className="opacity-0 -translate-y-1 translate-x-1 group-hover:opacity-100 group-hover:translate-y-0 group-hover:translate-x-0 transition-all" /></Link></li>
+              <li><Link href="/#faq" onClick={(e) => {
+                if (window.location.pathname === '/') {
+                  const el = document.getElementById('faq');
+                  if (el) {
+                    e.preventDefault();
+                    el.scrollIntoView({ behavior: 'smooth' });
+                    window.history.pushState(null, '', '/#faq');
+                  }
+                }
+              }} className="hover:text-white transition-colors flex items-center gap-1 group">FAQ <ArrowUpRight size={14} className="opacity-0 -translate-y-1 translate-x-1 group-hover:opacity-100 group-hover:translate-y-0 group-hover:translate-x-0 transition-all" /></Link></li>
+              <li><Link href="#" onClick={(e) => {
+                  if (window.location.pathname === '/') {
+                    e.preventDefault();
+                  }
+                }} className="hover:text-white transition-colors flex items-center gap-1 group">Journal <ArrowUpRight size={14} className="opacity-0 -translate-y-1 translate-x-1 group-hover:opacity-100 group-hover:translate-y-0 group-hover:translate-x-0 transition-all" /></Link></li>
             </ul>
           </div>
 
@@ -114,13 +147,17 @@ export default function Footer() {
                 <MapPin size={20} className="text-[#a1a1aa] group-hover:text-[var(--color-brand-orange)] transition-colors shrink-0" />
                 <span className="group-hover:text-white transition-colors">2467 Street No 12, Greenfields,<br />Faridabad, HR 121010</span>
               </li>
-              <li className="flex items-center gap-3 group cursor-pointer">
-                <Phone size={20} className="text-[#a1a1aa] group-hover:text-[var(--color-brand-orange)] transition-colors shrink-0" />
-                <span className="group-hover:text-white transition-colors">+91 98765 43210</span>
+              <li>
+                <a href="tel:+919718329143" className="flex items-center gap-3 group cursor-pointer">
+                  <Phone size={20} className="text-[#a1a1aa] group-hover:text-[var(--color-brand-orange)] transition-colors shrink-0" />
+                  <span className="group-hover:text-white transition-colors">+91 9718329143</span>
+                </a>
               </li>
-              <li className="flex items-center gap-3 group cursor-pointer">
-                <Mail size={20} className="text-[#a1a1aa] group-hover:text-[var(--color-brand-orange)] transition-colors shrink-0" />
-                <span className="group-hover:text-white transition-colors">hello@doggylobby.in</span>
+              <li>
+                <a href="mailto:doggylobbypetshop@gmail.com" className="flex items-center gap-3 group cursor-pointer">
+                  <Mail size={20} className="text-[#a1a1aa] group-hover:text-[var(--color-brand-orange)] transition-colors shrink-0" />
+                  <span className="group-hover:text-white transition-colors">doggylobbypetshop@gmail.com</span>
+                </a>
               </li>
             </ul>
           </div>

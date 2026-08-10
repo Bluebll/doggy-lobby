@@ -69,7 +69,14 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
     fetchProduct()
   }, [slug])
 
-  if (loading) return <div className="min-h-screen p-8 text-center">Loading...</div>
+  if (loading) {
+    return (
+      <div className="min-h-[100dvh] pt-40 px-4 md:px-8 pb-8 flex flex-col items-center justify-start bg-white">
+        <div className="w-12 h-12 rounded-full border-[3px] border-gray-100 border-t-[var(--color-brand-orange)] animate-spin mb-6" />
+        <h2 className="font-heading font-extrabold text-gray-400 tracking-[0.2em] uppercase text-xs">Doggy Lobby</h2>
+      </div>
+    )
+  }
   if (!product || !product.id) return <div className="min-h-screen pt-40 px-4 md:px-8 pb-8"><div className="flex gap-2 mb-4"><BackButton /><HomeButton /></div><p className="mt-4">Product not found</p></div>
 
   return (
@@ -135,15 +142,7 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
           <div className="flex flex-col justify-start">
             <h1 className="text-4xl font-bold mb-4">{product.name}</h1>
         <p className="text-2xl text-orange-600 font-bold mb-4">₹{product.price}</p>
-        <p className="text-gray-600 mb-6">{product.description}</p>
-        
-        <div className="mb-6 space-y-2 text-sm text-gray-700">
-          <p className="flex items-center"><span className="text-green-500 mr-2 font-bold">✓</span> Ultra-soft premium fabric</p>
-          <p className="flex items-center"><span className="text-green-500 mr-2 font-bold">✓</span> Comfortable cushioning</p>
-          <p className="flex items-center"><span className="text-green-500 mr-2 font-bold">✓</span> Perfect for puppies and small dogs</p>
-          <p className="flex items-center"><span className="text-green-500 mr-2 font-bold">✓</span> Easy to clean</p>
-          <p className="flex items-center"><span className="text-green-500 mr-2 font-bold">✓</span> Durable everyday design</p>
-        </div>
+        <div className="text-gray-600 mb-6 whitespace-pre-wrap leading-relaxed">{product.description}</div>
 
         <p className="text-sm text-gray-500 mb-6">{product.stock} in stock</p>
         <div className="flex gap-4">

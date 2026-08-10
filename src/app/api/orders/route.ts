@@ -92,7 +92,8 @@ export async function POST(req: Request) {
         order_number: finalOrderNumber,
         customer_name: body.customer_name.trim(),
         customer_phone: body.customer_phone.trim(),
-        // Cannot insert address or notes because columns do not exist in current schema
+        customer_address: body.customer_address.trim(),
+        notes: body.notes?.trim() || null,
         total_price: total,
         status: "pending",
       })

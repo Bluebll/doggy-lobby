@@ -41,7 +41,7 @@ export default async function AdminOrderDetailsPage({
   // 1. Fetch Order
   const { data: order, error: orderError } = await supabase
     .from('orders')
-    .select('id, order_number, customer_name, customer_phone, total_price, status, created_at')
+    .select('id, order_number, customer_name, customer_phone, customer_address, notes, total_price, status, created_at')
     .eq('id', orderId)
     .single()
 
@@ -110,6 +110,16 @@ export default async function AdminOrderDetailsPage({
               <dt className="text-sm font-medium text-gray-500">Phone</dt>
               <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{order.customer_phone}</dd>
             </div>
+            <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <dt className="text-sm font-medium text-gray-500">Address</dt>
+              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 whitespace-pre-wrap">{order.customer_address || 'Not provided'}</dd>
+            </div>
+            {order.notes && (
+              <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt className="text-sm font-medium text-gray-500">Notes</dt>
+                <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 whitespace-pre-wrap">{order.notes}</dd>
+              </div>
+            )}
           </dl>
         </div>
       </div>
@@ -157,6 +167,7 @@ export default async function AdminOrderDetailsPage({
               <select
                 id="status"
                 name="status"
+                key={order.status}
                 defaultValue={order.status}
                 className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-black focus:border-black sm:text-sm rounded-md border"
               >

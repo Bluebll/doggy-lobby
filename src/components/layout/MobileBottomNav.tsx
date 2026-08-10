@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
 import { Phone, MessageCircle, Navigation, MapPin } from "lucide-react"
@@ -8,22 +8,39 @@ import { WHATSAPP_NUMBER } from "@/lib/constants"
 
 export default function MobileBottomNav() {
   const [isVisible, setIsVisible] = useState(true)
-  const [lastScrollY, setLastScrollY] = useState(0)
+  const lastScrollY = useRef(0)
+  const isVisibleRef = useRef(true)
 
   useEffect(() => {
+    let ticking = false
     const handleScroll = () => {
-      const currentScrollY = window.scrollY
-      if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        setIsVisible(false) // scrolling down
-      } else {
-        setIsVisible(true) // scrolling up
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const currentScrollY = window.scrollY
+          const delta = currentScrollY - lastScrollY.current
+          
+          if (Math.abs(delta) > 15) {
+            const shouldHide = delta > 0 && currentScrollY > 100
+            
+            if (shouldHide && isVisibleRef.current) {
+              setIsVisible(false)
+              isVisibleRef.current = false
+            } else if (!shouldHide && !isVisibleRef.current) {
+              setIsVisible(true)
+              isVisibleRef.current = true
+            }
+            
+            lastScrollY.current = currentScrollY
+          }
+          ticking = false
+        })
+        ticking = true
       }
-      setLastScrollY(currentScrollY)
     }
 
     window.addEventListener("scroll", handleScroll, { passive: true })
     return () => window.removeEventListener("scroll", handleScroll)
-  }, [lastScrollY])
+  }, [])
 
   // Hide on desktop
   if (typeof window !== "undefined" && window.innerWidth >= 768) {

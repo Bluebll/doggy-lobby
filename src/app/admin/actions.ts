@@ -137,7 +137,7 @@ export async function createProductAction(formData: FormData): Promise<{ error?:
 
   if (error) return { error: error.message }
 
-  redirect('/admin/products')
+  return {}
 }
 
 export async function updateProductAction(id: string, formData: FormData): Promise<{ error?: string }> {
@@ -168,7 +168,7 @@ export async function updateProductAction(id: string, formData: FormData): Promi
 
   if (error) return { error: error.message }
 
-  redirect('/admin/products')
+  return {}
 }
 
 export async function deactivateProductAction(id: string): Promise<{ error?: string }> {

@@ -19,8 +19,13 @@ export default function ResetPasswordPage() {
   const [initializing, setInitializing] = useState(true)
 
   useEffect(() => {
-    // Supabase will automatically parse the hash segment of the URL for the access_token
-    // and trigger an auth state change.
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        setSessionActive(true)
+      }
+      setInitializing(false)
+    })
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_IN' || session) {
         setSessionActive(true)

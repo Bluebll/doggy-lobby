@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, FormEvent, useEffect } from "react"
+import React, { useState, FormEvent, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { X, Plus, Minus, Trash2, ShoppingBag, MessageCircle, Loader2 } from "lucide-react"
 import { useCart } from "@/stores/cart-store"
@@ -11,6 +11,7 @@ type CartItem = ReturnType<typeof useCart.getState>["items"][number]
 
 import { create } from "zustand"
 import SafeImage from "@/components/ui/SafeImage"
+import Link from "next/link"
 
 export const useCartUI = create<{ isOpen: boolean; openCart: () => void; closeCart: () => void }>((set) => ({
   isOpen: false,
@@ -47,13 +48,57 @@ export default function CartDrawer() {
   }
 
   useEffect(() => {
+    if (typeof window === "undefined") return
+
     if (isOpen) {
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth
+      document.documentElement.style.overflow = "hidden"
+      document.documentElement.style.overscrollBehavior = "none"
       document.body.style.overflow = "hidden"
-    } else {
-      document.body.style.overflow = ""
-    }
-    return () => {
-      document.body.style.overflow = ""
+      document.body.style.overscrollBehavior = "none"
+      document.body.style.paddingRight = `${scrollbarWidth}px`
+
+      let startY = 0
+
+      const handleTouchStart = (e: TouchEvent) => {
+        startY = e.touches[0].clientY
+      }
+
+      const handleTouchMove = (e: TouchEvent) => {
+        const cartScroll = document.getElementById("cart-scroll-container")
+        
+        if (!cartScroll || !cartScroll.contains(e.target as Node)) {
+          if (e.cancelable) e.preventDefault()
+          return
+        }
+
+        const currentY = e.touches[0].clientY
+        const isScrollingUp = currentY > startY
+        const isScrollingDown = currentY < startY
+        const scrollTop = cartScroll.scrollTop
+        const maxScroll = cartScroll.scrollHeight - cartScroll.clientHeight
+
+        if (scrollTop <= 0 && isScrollingUp) {
+          if (e.cancelable) e.preventDefault()
+        }
+
+        if (scrollTop >= maxScroll - 1 && isScrollingDown) {
+          if (e.cancelable) e.preventDefault()
+        }
+      }
+
+      document.addEventListener("touchstart", handleTouchStart, { passive: true })
+      document.addEventListener("touchmove", handleTouchMove, { passive: false })
+
+      return () => {
+        document.documentElement.style.overflow = ""
+        document.documentElement.style.overscrollBehavior = ""
+        document.body.style.overflow = ""
+        document.body.style.overscrollBehavior = ""
+        document.body.style.paddingRight = ""
+        document.removeEventListener("touchstart", handleTouchStart)
+        document.removeEventListener("touchmove", handleTouchMove)
+      }
     }
   }, [isOpen])
 
@@ -143,7 +188,7 @@ export default function CartDrawer() {
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto">
+            <div id="cart-scroll-container" className="flex-1 min-h-0 overflow-y-auto overscroll-none" data-lenis-prevent="true">
               {step === "cart" && (
                 <CartList items={items} addToCart={addToCart} removeFromCart={removeFromCart} decreaseQuantity={decreaseQuantity} />
               )}
@@ -177,13 +222,22 @@ export default function CartDrawer() {
                 </div>
 
                 {step === "cart" ? (
-                  <button
-                    onClick={() => setStep("checkout")}
-                    className="w-full inline-flex items-center justify-center gap-2 px-6 py-4 rounded-full bg-black text-white font-semibold hover:bg-[var(--color-brand-orange)] transition-colors"
-                  >
-                    Continue to checkout
-                    <ShoppingBag size={18} />
-                  </button>
+                  <>
+                    <button
+                      onClick={() => setStep("checkout")}
+                      className="w-full inline-flex items-center justify-center gap-2 px-6 py-4 rounded-full bg-black text-white font-semibold hover:bg-[var(--color-brand-orange)] transition-colors"
+                    >
+                      Continue to checkout
+                      <ShoppingBag size={18} />
+                    </button>
+                    <Link
+                      href="/cart"
+                      onClick={handleClose}
+                      className="w-full inline-flex items-center justify-center gap-2 px-6 py-4 rounded-full border border-black/10 bg-transparent text-black font-semibold hover:bg-black hover:text-white transition-colors"
+                    >
+                      View Full Cart
+                    </Link>
+                  </>
                 ) : (
                   <button
                     form="checkout-form"
@@ -237,49 +291,66 @@ function CartList({
   return (
     <ul className="divide-y divide-black/5">
       {items.map((i) => (
-        <li key={i.id} className="px-6 py-4 flex gap-4">
-          <div className="relative w-20 h-20 rounded-xl overflow-hidden bg-white shrink-0">
-            {i.image && (
-              <SafeImage src={i.image} alt={i.name} className="absolute inset-0 w-full h-full object-contain" />
-            )}
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="font-heading font-bold text-sm text-black line-clamp-2">{i.name}</p>
-            <p className="text-[var(--color-brand-orange)] font-bold text-sm mt-1">{formatPrice(i.price)}</p>
-
-            <div className="flex items-center justify-between mt-3">
-              <div className="inline-flex items-center rounded-full bg-[var(--color-brand-gray)] p-1">
-                <button
-                  onClick={() => decreaseQuantity(i.id)}
-                  className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-white transition-colors"
-                  aria-label="Decrease quantity"
-                >
-                  <Minus size={14} />
-                </button>
-                <span className="px-3 text-sm font-bold">{i.quantity}</span>
-                <button
-                  onClick={() => addToCart({ ...i, quantity: 1 })}
-                  disabled={i.quantity >= (i.stock ?? 999)}
-                  className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  aria-label="Increase quantity"
-                >
-                  <Plus size={14} />
-                </button>
-              </div>
-              <button
-                onClick={() => removeFromCart(i.id)}
-                className="text-gray-400 hover:text-red-500 transition-colors"
-                aria-label="Remove item"
-              >
-                <Trash2 size={16} />
-              </button>
-            </div>
-          </div>
-        </li>
+        <MemoizedCartItem key={i.id} i={i} addToCart={addToCart} removeFromCart={removeFromCart} decreaseQuantity={decreaseQuantity} />
       ))}
     </ul>
   )
 }
+
+const CartItemRow = ({
+  i, addToCart, removeFromCart, decreaseQuantity
+}: {
+  i: CartItem
+  addToCart: (item: CartItem) => void
+  removeFromCart: (id: number) => void
+  decreaseQuantity: (id: number) => void
+}) => {
+  return (
+    <li className="px-6 py-4 flex gap-4">
+      <div className="relative w-20 h-20 rounded-xl overflow-hidden bg-white shrink-0">
+        {i.image && (
+          <SafeImage src={i.image} alt={i.name} className="absolute inset-0 w-full h-full object-contain" />
+        )}
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="font-heading font-bold text-sm text-black line-clamp-2">{i.name}</p>
+        <p className="text-[var(--color-brand-orange)] font-bold text-sm mt-1">{formatPrice(i.price)}</p>
+
+        <div className="flex items-center justify-between mt-3">
+          <div className="inline-flex items-center rounded-full bg-[var(--color-brand-gray)] p-1">
+            <button
+              onClick={() => decreaseQuantity(i.id)}
+              className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-white transition-colors"
+              aria-label="Decrease quantity"
+            >
+              <Minus size={14} />
+            </button>
+            <span className="px-3 text-sm font-bold">{i.quantity}</span>
+            <button
+              onClick={() => addToCart({ ...i, quantity: 1 })}
+              disabled={i.quantity >= (i.stock ?? 999)}
+              className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              aria-label="Increase quantity"
+            >
+              <Plus size={14} />
+            </button>
+          </div>
+          <button
+            onClick={() => removeFromCart(i.id)}
+            className="text-gray-400 hover:text-red-500 transition-colors"
+            aria-label="Remove item"
+          >
+            <Trash2 size={16} />
+          </button>
+        </div>
+      </div>
+    </li>
+  )
+}
+
+const MemoizedCartItem = React.memo(CartItemRow, (prev, next) => {
+  return prev.i === next.i && prev.i.quantity === next.i.quantity;
+})
 
 function CheckoutForm(props: {
   name: string; setName: (v: string) => void
