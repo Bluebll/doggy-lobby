@@ -71,7 +71,7 @@ export default function MobileBottomNav() {
               <span className="absolute -top-1 -right-1 w-2 h-2 bg-[#25D366] rounded-full"></span>
             </Link>
 
-            <Link href="#contact" aria-label="Store Location" className="flex items-center justify-center -mt-8 w-16 h-16 rounded-full bg-black text-white shadow-[0_10px_20px_rgba(0,0,0,0.2)] border-[4px] border-[var(--background)] focus-visible:ring-2 focus-visible:ring-[var(--color-brand-orange)]">
+            <Link href="/#contact" aria-label="Store Location" className="flex items-center justify-center -mt-8 w-16 h-16 rounded-full bg-black text-white shadow-[0_10px_20px_rgba(0,0,0,0.2)] border-[4px] border-[var(--background)] focus-visible:ring-2 focus-visible:ring-[var(--color-brand-orange)]">
               <MapPin size={24} className="text-[var(--color-brand-orange)]" aria-hidden="true" />
             </Link>
 
