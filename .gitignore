@@ -19,7 +19,7 @@ x# See https://help.github.com/articles/ignoring-files/ for more about ignoring 
 
 # Database/local files
 schema.json
-supabase/
+supabase/.temp/
 /.next/
 /out/
 
