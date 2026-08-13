@@ -5,6 +5,7 @@ import { createClient } from '@supabase/supabase-js'
 export async function requireAdminAuth() {
   const cookieStore = await cookies()
   const auth = cookieStore.get('admin_auth')
+
   if (!auth?.value) {
     redirect('/admin/login')
   }
@@ -15,8 +16,15 @@ export async function requireAdminAuth() {
   )
 
   const { data, error } = await supabase.auth.getUser(auth.value)
-  
+
   if (error || !data?.user) {
+    redirect('/admin/login')
+  }
+
+  const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase()
+  const userEmail = data.user.email?.trim().toLowerCase()
+
+  if (!adminEmail || !userEmail || userEmail !== adminEmail) {
     redirect('/admin/login')
   }
 
