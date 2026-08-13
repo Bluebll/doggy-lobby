@@ -139,11 +139,12 @@ export default function CartDrawer() {
       if (!res.ok) throw new Error(data.error || "Failed to place order")
 
       const orderNum = data.order.order_number as string
+      const authoritativeTotal = data.order.total_price
       const msg = buildOrderMessage({
         orderNumber: orderNum,
         items,
-        subtotal,
-        total: subtotal,
+        subtotal: authoritativeTotal,
+        total: authoritativeTotal,
         customer: { name, phone, address, notes },
       })
       const url = buildWhatsAppUrl(msg)
@@ -152,6 +153,11 @@ export default function CartDrawer() {
       setWaUrl(url)
       setStep("success")
       clearCart()
+      setIdempotencyKey(
+        typeof crypto !== "undefined" && crypto.randomUUID
+          ? crypto.randomUUID()
+          : `dl-${Date.now()}-${Math.random().toString(36).substring(2, 15)}`
+      )
 
       if (typeof window !== "undefined") window.open(url, "_blank")
     } catch (err) {

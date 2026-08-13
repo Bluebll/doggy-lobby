@@ -214,7 +214,7 @@ export default async function AdminOrderDetailsPage({
               <dt className="text-sm font-medium text-gray-500">Status</dt>
               <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                 <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-                  order.status === 'completed' ? 'bg-green-100 text-green-800' :
+                  order.status === 'delivered' ? 'bg-green-100 text-green-800' :
                   order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
                   order.status === 'cancelled' ? 'bg-red-100 text-red-800' :
                   'bg-gray-100 text-gray-800'

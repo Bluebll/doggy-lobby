@@ -7,9 +7,14 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
   
   const { data: product } = await supabase
     .from('products')
-    .select('*')
+    .select('id, name, description, price, sale_price, image_urls, is_active')
     .eq('slug', slug)
+    .eq('is_active', true)
     .single()
   
-  return Response.json(product || { error: 'Not found' })
+  if (!product) {
+    return Response.json({ error: 'Not found' }, { status: 404 })
+  }
+
+  return Response.json(product)
 }

@@ -51,12 +51,15 @@ export async function POST(req: Request) {
     })
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 })
+      console.error('Order creation RPC error:', error)
+      const msg = error.message || ""
+      const isExpected = msg.includes('Invalid') || msg.includes('stock') || msg.includes('unavailable') || msg.includes('Could not create') || msg.includes('greater than zero')
+      return NextResponse.json({ error: isExpected ? msg : "Failed to process order. Please try again later." }, { status: 500 })
     }
 
     return NextResponse.json({ order })
   } catch (e) {
-    const msg = e instanceof Error ? e.message : "Unknown error"
-    return NextResponse.json({ error: msg }, { status: 500 })
+    console.error('Order API exception:', e)
+    return NextResponse.json({ error: "An unexpected error occurred." }, { status: 500 })
   }
 }
