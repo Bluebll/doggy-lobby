@@ -58,20 +58,31 @@ test.describe('Doggy Lobby - Complete QA Audit', () => {
   test.describe('2. NAVIGATION LINKS', () => {
 
     test('Shop link exists', async ({ page }) => {
-  await page.goto('/')
+      await page.goto('/')
 
-  const menuButton = page.getByRole('button', { name: /toggle menu/i })
-  await expect(menuButton).toBeVisible()
-  await menuButton.click()
+      const shop = page.getByRole('link', {
+        name: 'Shop',
+        exact: true
+      })
 
-  const shop = page.getByRole('link', { name: 'Shop', exact: true })
-  await expect(shop).toBeVisible()
-})
+      if ((page.viewportSize()?.width ?? 1280) < 768) {
+        const menuButton = page.getByRole('button', {
+          name: /toggle menu/i
+        })
+
+        await expect(menuButton).toBeVisible()
+        await menuButton.click()
+      }
+
+      await expect(shop).toBeVisible()
+    })
 
     test('Logo returns to homepage', async ({ page }) => {
       await page.goto('/collections/dogs')
 
-      await page.getByRole('link', { name: /Doggy Lobby/i }).first().click()
+      await page.getByRole('link', {
+        name: /Doggy Lobby/i
+      }).first().click()
 
       await expect(page).toHaveURL(/\/$/)
     })
@@ -100,7 +111,6 @@ test.describe('Doggy Lobby - Complete QA Audit', () => {
         })
 
         await expect(link).toBeVisible()
-
         await link.click()
 
         await expect(page).toHaveURL(
@@ -181,6 +191,7 @@ test.describe('Doggy Lobby - Complete QA Audit', () => {
       await page.goto('/')
 
       await expect(page.locator('main')).toBeVisible()
+
       await expect(
         page.getByRole('button', { name: /toggle menu/i })
       ).toBeVisible()
@@ -200,7 +211,6 @@ test.describe('Doggy Lobby - Complete QA Audit', () => {
       })
 
       await expect(dogs).toBeVisible()
-
       await dogs.click()
 
       await expect(page).toHaveURL(/\/collections\/dogs$/)
