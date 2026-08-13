@@ -132,11 +132,6 @@ export default function Footer() {
                   }
                 }
               }} className="hover:text-white transition-colors flex items-center gap-1 group">FAQ <ArrowUpRight size={14} className="opacity-0 -translate-y-1 translate-x-1 group-hover:opacity-100 group-hover:translate-y-0 group-hover:translate-x-0 transition-all" /></Link></li>
-              <li><Link href="#" onClick={(e) => {
-                  if (window.location.pathname === '/') {
-                    e.preventDefault();
-                  }
-                }} className="hover:text-white transition-colors flex items-center gap-1 group">Journal <ArrowUpRight size={14} className="opacity-0 -translate-y-1 translate-x-1 group-hover:opacity-100 group-hover:translate-y-0 group-hover:translate-x-0 transition-all" /></Link></li>
             </ul>
           </div>
 
@@ -165,17 +160,9 @@ export default function Footer() {
           <div>
             <h4 className="font-heading font-bold text-white mb-6">Hours</h4>
             <ul className="space-y-4 text-[#a1a1aa]">
-              <li className="flex justify-between border-b border-white/5 pb-2">
-                <span>Mon - Fri</span>
-                <span className="text-white">10AM - 9PM</span>
-              </li>
-              <li className="flex justify-between border-b border-white/5 pb-2">
-                <span>Saturday</span>
-                <span className="text-white">9AM - 10PM</span>
-              </li>
               <li className="flex justify-between">
-                <span>Sunday</span>
-                <span className="text-[var(--color-brand-orange)] font-semibold">Closed</span>
+                <span>Every Day</span>
+                <span className="text-white">9:30AM - 9:30PM</span>
               </li>
             </ul>
           </div>
@@ -183,11 +170,6 @@ export default function Footer() {
 
         <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-6 text-[#71717a] text-sm">
           <p>&copy; {new Date().getFullYear()} Doggy Lobby. Crafted with precision.</p>
-          <div className="flex gap-8">
-            <Link href="#" className="hover:text-white transition-colors">Privacy</Link>
-            <Link href="#" className="hover:text-white transition-colors">Terms</Link>
-            <Link href="#" className="hover:text-white transition-colors">Cookies</Link>
-          </div>
         </div>
       </div>
     </footer>
