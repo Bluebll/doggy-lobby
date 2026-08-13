@@ -30,10 +30,18 @@ export default function CartPage() {
   const [error, setError] = useState<string | null>(null)
   const [orderNumber, setOrderNumber] = useState<string>("")
   const [waUrl, setWaUrl] = useState<string>("")
+  const [idempotencyKey, setIdempotencyKey] = useState<string>("")
 
-  // Prevent hydration mismatch
+  // Prevent hydration mismatch and safely generate the idempotency key on the client
   const [mounted, setMounted] = useState(false)
-  useEffect(() => setMounted(true), [])
+  useEffect(() => {
+    setIdempotencyKey(
+      typeof crypto !== "undefined" && crypto.randomUUID
+        ? crypto.randomUUID()
+        : `dl-${Date.now()}-${Math.random().toString(36).substring(2, 15)}`
+    )
+    setMounted(true)
+  }, [])
 
   const router = useRouter()
   const handleBack = (e: React.MouseEvent) => {
@@ -52,7 +60,10 @@ export default function CartPage() {
     try {
       const res = await fetch("/api/orders", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Idempotency-Key": idempotencyKey,
+        },
         body: JSON.stringify({
           customer_name: name,
           customer_phone: phone,
