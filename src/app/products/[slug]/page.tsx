@@ -38,25 +38,25 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
 
           const { data: sameCollection } = await supabase
             .from('products')
-            .select('*')
+            .select('id, name, slug, description, price, sale_price, image_urls, stock, collection')
             .eq('is_active', true)
             .eq('collection', coll)
             .neq('id', data.id)
             .limit(4)
 
-          relatedData = sameCollection || []
+          relatedData = (sameCollection as Product[]) || []
 
           if (relatedData.length < 4) {
             const { data: fallback } = await supabase
               .from('products')
-              .select('*')
+              .select('id, name, slug, description, price, sale_price, image_urls, stock, collection')
               .eq('is_active', true)
               .neq('id', data.id)
               .neq('collection', coll)
               .limit(4 - relatedData.length)
 
             if (fallback) {
-              relatedData = [...relatedData, ...fallback]
+              relatedData = [...relatedData, ...(fallback as Product[])]
             }
           }
 

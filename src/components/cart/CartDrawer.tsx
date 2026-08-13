@@ -75,7 +75,7 @@ export default function CartDrawer() {
 
       const handleTouchMove = (e: TouchEvent) => {
         const cartScroll = document.getElementById("cart-scroll-container")
-        
+
         if (!cartScroll || !cartScroll.contains(e.target as Node)) {
           if (e.cancelable) e.preventDefault()
           return
@@ -140,9 +140,14 @@ export default function CartDrawer() {
 
       const orderNum = data.order.order_number as string
       const authoritativeTotal = data.order.total_price
+
+      if (!data.order.items || !Array.isArray(data.order.items) || data.order.items.length === 0) {
+        throw new Error("Failed to retrieve authoritative order items")
+      }
+
       const msg = buildOrderMessage({
         orderNumber: orderNum,
-        items,
+        items: data.order.items,
         subtotal: authoritativeTotal,
         total: authoritativeTotal,
         customer: { name, phone, address, notes },
@@ -230,7 +235,7 @@ export default function CartDrawer() {
                   <span className="text-sm text-gray-500 font-medium">Subtotal</span>
                   <span className="font-heading text-2xl font-extrabold text-black">{formatPrice(subtotal)}</span>
                 </div>
-                
+
                 <div className="text-sm font-medium text-gray-700 bg-[var(--color-brand-gray)] rounded-xl px-4 py-3 flex items-center gap-2">
                   {subtotal >= 1499 ? (
                     <><span>✅</span> Delivery available</>

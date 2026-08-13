@@ -8,7 +8,7 @@ export async function GET() {
     const { data, error } = await supabase
       .from('products')
       .select(
-        'id, name, description, price, sale_price, image_urls, is_active'
+        'id, slug, name, description, price, sale_price, image_urls, is_active, stock, collection'
       )
       .eq('is_active', true)
       .limit(48)

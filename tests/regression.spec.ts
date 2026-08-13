@@ -234,4 +234,131 @@ test.describe('Doggy Lobby - Regression Tests', () => {
     await expect(page.getByText('Failed to retrieve authoritative order items')).toBeVisible()
     await expect(page.getByText('Order Placed!')).not.toBeVisible()
   })
+
+  test('6. PRODUCT DETAIL: Add to cart flow', async ({ page }) => {
+    // We mock the product API to ensure we have a predictable product with positive stock
+    // This is unavoidable because we cannot mutate the test DB to guarantee stock levels.
+    await page.route('/api/products/*', async route => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          id: 9999,
+          name: 'Guaranteed Stock Product',
+          slug: 'guaranteed-stock-product',
+          description: 'A test product with guaranteed stock',
+          price: 1500,
+          image_urls: ['/placeholder.png'],
+          is_active: true,
+          stock: 10,
+          collection: 'dogs'
+        })
+      })
+    })
+
+    await page.goto('/collections/dogs')
+    const firstProduct = page.locator('a[href^="/products/"]').first()
+    await firstProduct.click()
+
+    // The page will fetch the product from /api/products/* and get our mock
+    const addToCartBtn = page.getByRole('button', { name: /Add to Cart/i })
+    await addToCartBtn.click()
+
+    await page.goto('/cart')
+    await expect(page.getByText('Your Cart')).toBeVisible()
+
+    // Verify the cart contains our mocked product
+    await expect(page.getByText('Guaranteed Stock Product')).toBeVisible()
+  })
+
+  test('7. CART DRAWER: Order total authority uses server-provided items', async ({ page }) => {
+    await page.addInitScript(() => {
+      window.open = (url) => {
+        // @ts-ignore
+        window.__waUrl = url
+        return null
+      }
+    })
+
+    await page.route('/api/orders', async route => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          order: {
+            order_number: 'DL-AUTHORITY-TEST-DRAWER',
+            total_price: 8888.88,
+            items: [
+              { id: 1, name: 'Drawer Authoritative Product', price: 8888.88, quantity: 1 }
+            ]
+          }
+        })
+      })
+    })
+
+    await page.addInitScript(() => {
+      window.localStorage.setItem('cart-store', JSON.stringify({
+        state: {
+          items: [{ id: 1, name: 'Fake Price Product', price: 10, quantity: 1, stock: 999, image: '' }]
+        },
+        version: 0
+      }))
+    })
+
+    await page.goto('/')
+
+    // Open drawer
+    await page.getByRole('button', { name: /Open cart/i }).click()
+    await page.getByRole('button', { name: /Continue to checkout/i }).click()
+
+    await page.getByPlaceholder('Your name').fill('John Drawer')
+    await page.getByPlaceholder('+91 98765 43210').fill('9876543210')
+    await page.getByPlaceholder('House / flat, street, sector, city, pincode').fill('Drawer Address')
+
+    await page.getByRole('button', { name: /Place order via WhatsApp/i }).click()
+    await expect(page.getByText('Order Placed ✨')).toBeVisible()
+
+    const openedUrl = await page.evaluate(() => (window as any).__waUrl as string)
+    expect(openedUrl).toBeDefined()
+    expect(decodeURIComponent(openedUrl)).toContain('8,888.88')
+    expect(decodeURIComponent(openedUrl)).toContain('Drawer Authoritative Product')
+  })
+
+  test('8. CART DRAWER: Missing authoritative items shows error', async ({ page }) => {
+    await page.route('/api/orders', async route => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          order: {
+            order_number: 'DL-AUTHORITY-TEST-DRAWER-MISSING',
+            total_price: 9999.99
+          }
+        })
+      })
+    })
+
+    await page.addInitScript(() => {
+      window.localStorage.setItem('cart-store', JSON.stringify({
+        state: {
+          items: [{ id: 1, name: 'Fake Price Product', price: 10, quantity: 1, stock: 999, image: '' }]
+        },
+        version: 0
+      }))
+    })
+
+    await page.goto('/')
+
+    await page.getByRole('button', { name: /Open cart/i }).click()
+    await page.getByRole('button', { name: /Continue to checkout/i }).click()
+
+    await page.getByPlaceholder('Your name').fill('John Drawer')
+    await page.getByPlaceholder('+91 98765 43210').fill('9876543210')
+    await page.getByPlaceholder('House / flat, street, sector, city, pincode').fill('Drawer Address')
+
+    await page.getByRole('button', { name: /Place order via WhatsApp/i }).click()
+
+    await expect(page.getByText('Failed to retrieve authoritative order items')).toBeVisible()
+    await expect(page.getByText('Order Placed ✨')).not.toBeVisible()
+  })
 })

@@ -7,7 +7,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
   
   const { data: product } = await supabase
     .from('products')
-    .select('id, name, description, price, sale_price, image_urls, is_active')
+    .select('id, name, description, price, sale_price, image_urls, is_active, stock, collection')
     .eq('slug', slug)
     .eq('is_active', true)
     .single()

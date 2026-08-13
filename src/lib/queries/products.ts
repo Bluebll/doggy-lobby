@@ -16,7 +16,7 @@ export async function queryProducts(filter: { q?: string } = {}) {
   const supabase = await getSupabaseServer()
   if (!supabase) return []
   
-  let q = supabase.from('products').select('*').eq('is_active', true)
+  let q = supabase.from('products').select('id, name, slug, description, price, sale_price, image_urls, stock, collection').eq('is_active', true)
   
   if (filter.q) {
     const like = `%${filter.q}%`
@@ -34,7 +34,7 @@ export async function getProductBySlug(slug: string) {
   
   const { data, error } = await supabase
     .from('products')
-    .select('*')
+    .select('id, name, slug, description, price, sale_price, image_urls, stock, collection')
     .eq('slug', slug)
     .eq('is_active', true)
     .returns<Product[]>()
