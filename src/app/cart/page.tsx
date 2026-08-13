@@ -77,9 +77,14 @@ export default function CartPage() {
 
       const orderNum = data.order.order_number as string
       const authoritativeTotal = data.order.total_price
+
+      if (!data.order.items || !Array.isArray(data.order.items) || data.order.items.length === 0) {
+        throw new Error("Failed to retrieve authoritative order items")
+      }
+
       const msg = buildOrderMessage({
         orderNumber: orderNum,
-        items,
+        items: data.order.items,
         subtotal: authoritativeTotal,
         total: authoritativeTotal,
         customer: { name, phone, address, notes },
@@ -183,13 +188,13 @@ export default function CartPage() {
           {/* RIGHT COLUMN: SUMMARY / CHECKOUT */}
           <div className="w-full lg:w-[440px] shrink-0 bg-white rounded-[var(--radius-3xl)] p-6 md:p-8 shadow-sm border border-black/5 sticky top-32">
             <h2 className="font-heading text-2xl font-extrabold text-black mb-6">Order Summary</h2>
-            
+
             <div className="space-y-4 mb-8">
               <div className="flex items-center justify-between">
                 <span className="text-gray-500 font-medium">Subtotal ({items.length} items)</span>
                 <span className="font-heading text-xl font-extrabold text-black">{formatPrice(subtotal)}</span>
               </div>
-              
+
               <div className="text-sm font-medium text-gray-700 bg-[var(--color-brand-gray)] rounded-2xl px-5 py-4 flex items-center gap-3">
                 {subtotal >= 1499 ? (
                   <><span>✅</span> Free delivery available!</>
@@ -271,7 +276,7 @@ export default function CartPage() {
                       {submitting ? <Loader2 size={20} className="animate-spin" /> : <MessageCircle size={20} />}
                       {submitting ? "Placing order..." : "Place order via WhatsApp"}
                     </button>
-                    
+
                     <button
                       onClick={() => setStep("cart")}
                       className="w-full mt-4 py-3 text-gray-500 font-semibold hover:text-black transition-colors"
