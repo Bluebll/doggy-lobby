@@ -35,7 +35,7 @@ export default function Navbar() {
       }`}
     >
       <div className="container mx-auto px-6 md:px-12 flex justify-between items-center">
-        <Link href="/" className="text-2xl font-heading font-extrabold tracking-tighter relative group">
+        <Link href="/" aria-label="Doggy Lobby" className="text-2xl font-heading font-extrabold tracking-tighter relative group">
           <span className="relative z-10 transition-colors duration-300 text-black">Doggy</span>
           <span className="relative z-10 text-gradient">Lobby.</span>
         </Link>

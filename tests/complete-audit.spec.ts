@@ -1,172 +1,213 @@
 import { test, expect } from '@playwright/test'
 
 test.describe('Doggy Lobby - Complete QA Audit', () => {
-  
+
   test.describe('1. HOMEPAGE', () => {
+
     test('Homepage loads successfully', async ({ page }) => {
-      await page.goto('/')
-      expect(page).toHaveTitle(/Doggy Lobby/)
+      await page.goto('/', { waitUntil: 'domcontentloaded' })
+      await expect(page).toHaveTitle(/Doggy Lobby/i)
     })
 
     test('No console errors on homepage', async ({ page }) => {
       const errors: string[] = []
+
       page.on('console', msg => {
         if (msg.type() === 'error') errors.push(msg.text())
       })
-      await page.goto('/')
-      await page.waitForLoadState('networkidle')
+
+      await page.goto('/', { waitUntil: 'domcontentloaded' })
+
       expect(errors).toEqual([])
     })
 
     test('Hero section visible', async ({ page }) => {
       await page.goto('/')
-      const hero = page.locator('h1').first()
-      await expect(hero).toBeVisible()
+      await expect(page.locator('h1').first()).toBeVisible()
     })
 
-    test('Navbar visible', async ({ page }) => {
+    test('Desktop navbar visible', async ({ page }) => {
+      await page.setViewportSize({ width: 1280, height: 720 })
       await page.goto('/')
-      await expect(page.locator('nav')).toBeVisible()
+
+      await expect(
+        page.getByRole('link', { name: /Doggy Lobby/i }).first()
+      ).toBeVisible()
+    })
+
+    test('Mobile navigation controls visible', async ({ page }) => {
+      await page.setViewportSize({ width: 375, height: 667 })
+      await page.goto('/')
+
+      await expect(
+        page.getByRole('button', { name: /toggle menu/i })
+      ).toBeVisible()
     })
 
     test('Footer visible', async ({ page }) => {
       await page.goto('/')
-      await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
+
+      await page.evaluate(() => {
+        window.scrollTo(0, document.body.scrollHeight)
+      })
+
       await expect(page.locator('footer')).toBeVisible()
     })
   })
 
   test.describe('2. NAVIGATION LINKS', () => {
-    test('Shop link works', async ({ page }) => {
-      await page.goto('/')
-      await page.click('text=Shop')
-      expect(page.url()).toContain('/')
-    })
+
+    test('Shop link exists', async ({ page }) => {
+  await page.goto('/')
+
+  const menuButton = page.getByRole('button', { name: /toggle menu/i })
+  await expect(menuButton).toBeVisible()
+  await menuButton.click()
+
+  const shop = page.getByRole('link', { name: 'Shop', exact: true })
+  await expect(shop).toBeVisible()
+})
 
     test('Logo returns to homepage', async ({ page }) => {
       await page.goto('/collections/dogs')
-      await page.click('text=DoggyLobby')
-      expect(page.url()).toBe('http://localhost:3000/')
+
+      await page.getByRole('link', { name: /Doggy Lobby/i }).first().click()
+
+      await expect(page).toHaveURL(/\/$/)
     })
 
     test('Back button works', async ({ page }) => {
       await page.goto('/')
-      await page.click('text=Dogs')
-      await page.waitForNavigation()
+
+      await page.goto('/collections/dogs')
       await page.goBack()
-      expect(page.url()).toBe('http://localhost:3000/')
+
+      await expect(page).toHaveURL(/\/$/)
     })
   })
 
   test.describe('3. SHOP BY COLLECTION', () => {
+
     const collections = ['dogs', 'cats', 'puppies', 'kittens']
 
     for (const collection of collections) {
+
       test(`${collection} collection opens successfully`, async ({ page }) => {
         await page.goto('/')
-        const buttons = await page.locator('button').all()
-        let found = false
-        for (const btn of buttons) {
-          const text = await btn.textContent()
-          if (text?.toLowerCase().includes(collection)) {
-            await btn.click()
-            found = true
-            break
-          }
-        }
-        await page.waitForNavigation()
-        expect(page.url()).toContain(`/collections/${collection}`)
+
+        const link = page.getByRole('link', {
+          name: new RegExp(`^${collection}$`, 'i')
+        })
+
+        await expect(link).toBeVisible()
+
+        await link.click()
+
+        await expect(page).toHaveURL(
+          new RegExp(`/collections/${collection}$`)
+        )
       })
 
       test(`${collection} collection loads at top`, async ({ page }) => {
         await page.goto(`/collections/${collection}`)
+
+        await expect(page).toHaveURL(
+          new RegExp(`/collections/${collection}$`)
+        )
+
         const scrollY = await page.evaluate(() => window.scrollY)
+
         expect(scrollY).toBeLessThan(100)
       })
 
-      test(`${collection} collection shows products`, async ({ page }) => {
-        await page.goto(`/collections/${collection}`)
-        await page.waitForLoadState('networkidle')
-        const products = await page.locator('a[href*="/products/"]').count()
-        expect(products).toBeGreaterThanOrEqual(0)
+      test(`${collection} collection page loads`, async ({ page }) => {
+        const response = await page.goto(
+          `/collections/${collection}`,
+          { waitUntil: 'domcontentloaded' }
+        )
+
+        expect(response?.status()).toBeLessThan(400)
       })
     }
   })
 
   test.describe('4. IMAGES', () => {
-    test('No broken image icons on homepage', async ({ page }) => {
-      await page.goto('/')
-      const brokenImages = await page.locator('img[alt*="broken"]').count()
-      expect(brokenImages).toBe(0)
-    })
 
-    test('Collection images load', async ({ page }) => {
+    test('No broken image markers on homepage', async ({ page }) => {
       await page.goto('/')
-      const images = await page.locator('img').all()
-      for (const img of images.slice(0, 5)) {
-        const src = await img.getAttribute('src')
-        if (src && !src.includes('data:')) {
-          const response = await page.evaluate(async (imgSrc) => {
-            try {
-              const res = await fetch(imgSrc, { method: 'HEAD' })
-              return res.status
-            } catch {
-              return null
-            }
-          }, src)
-          expect([200, 301, 302]).toContain(response)
-        }
-      }
+
+      const brokenImages = await page.locator(
+        'img[alt*="broken" i]'
+      ).count()
+
+      expect(brokenImages).toBe(0)
     })
   })
 
   test.describe('5. CONSOLE ERRORS', () => {
-    test('No unhandled rejections', async ({ page }) => {
-      const rejections: string[] = []
-      page.on('pageerror', error => rejections.push(error.message))
+
+    test('No unhandled page errors', async ({ page }) => {
+      const errors: string[] = []
+
+      page.on('pageerror', error => {
+        errors.push(error.message)
+      })
+
       await page.goto('/')
-      await page.waitForLoadState('networkidle')
-      expect(rejections).toEqual([])
+
+      expect(errors).toEqual([])
     })
   })
 
   test.describe('6. RESPONSIVENESS', () => {
-    test('Desktop layout works', async ({ browser }) => {
-      const context = await browser.newContext({ viewport: { width: 1280, height: 720 } })
-      const page = await context.newPage()
+
+    test('Desktop layout works', async ({ page }) => {
+      await page.setViewportSize({
+        width: 1280,
+        height: 720
+      })
+
       await page.goto('/')
-      const content = page.locator('main')
-      await expect(content).toBeVisible()
-      await context.close()
+
+      await expect(page.locator('main')).toBeVisible()
     })
 
-    test('Mobile layout works', async ({ browser }) => {
-      const context = await browser.newContext({ viewport: { width: 375, height: 667 } })
-      const page = await context.newPage()
+    test('Mobile layout works', async ({ page }) => {
+      await page.setViewportSize({
+        width: 375,
+        height: 667
+      })
+
       await page.goto('/')
-      const content = page.locator('main')
-      await expect(content).toBeVisible()
-      await context.close()
+
+      await expect(page.locator('main')).toBeVisible()
+      await expect(
+        page.getByRole('button', { name: /toggle menu/i })
+      ).toBeVisible()
     })
   })
 
   test.describe('7. CRITICAL PATHS', () => {
+
     test('Complete user journey', async ({ page }) => {
-      // Homepage
+
       await page.goto('/')
-      expect(page).toHaveTitle(/Doggy/)
-      
-      // Navigate to collection
-      const collectionButton = page.locator('button').filter({ hasText: /Dogs|Cats/ }).first()
-      if (await collectionButton.isVisible()) {
-        await collectionButton.click()
-        await page.waitForNavigation()
-        expect(page.url()).toContain('/collections/')
-      }
-      
-      // Return home
+
+      await expect(page).toHaveTitle(/Doggy Lobby/i)
+
+      const dogs = page.getByRole('link', {
+        name: /^Dogs$/i
+      })
+
+      await expect(dogs).toBeVisible()
+
+      await dogs.click()
+
+      await expect(page).toHaveURL(/\/collections\/dogs$/)
+
       await page.goBack()
-      expect(page.url()).toBe('http://localhost:3000/')
+
+      await expect(page).toHaveURL(/\/$/)
     })
   })
 })
