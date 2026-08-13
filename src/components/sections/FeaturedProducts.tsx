@@ -5,7 +5,7 @@ import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { motion } from "framer-motion"
 import { ShoppingBag } from "lucide-react"
-import { getSupabaseServer } from "@/lib/supabase/server"
+
 
 type Product = {
   name: string;
@@ -120,34 +120,15 @@ export default function FeaturedProducts() {
   useEffect(() => {
     async function fetchProducts() {
       try {
-        const supabase = await getSupabaseServer()
-        if (supabase) {
-          const { data } = await supabase.from('products').select('id, name, description, price, sale_price, image_urls, is_active').eq('is_active', true)
-          if (data && data.length > 0) {
-            setDisplayProducts(data.map((p: {
-              id: string;
-              name: string;
-              description: string | null;
-              price: number;
-              sale_price: number | null;
-              image_urls: string[] | null;
-              is_active: boolean;
-            }) => {
-              const hasSale = p.sale_price !== null && p.sale_price < p.price;
-              const discount = hasSale ? Math.round(((p.price - p.sale_price!) / p.price) * 100) : null;
-              return {
-                name: p.name,
-                brand: "Doggy Lobby",
-                desc: p.description || "",
-                price: `₹${p.price}`,
-                sale_price: hasSale ? `₹${p.sale_price}` : null,
-                discount: discount,
-                image: p.image_urls?.[0] || "",
-                tag: "",
-                category: "Products"
-              }
-            }))
-          }
+        const response = await fetch("/api/products")
+        if (!response.ok) throw new Error("Failed to fetch products")
+        const data = await response.json()
+        if (data && data.length > 0) {
+          setDisplayProducts(data.map((p: { id: string; name: string; description: string | null; price: number; sale_price: number | null; image_urls: string[] | null; is_active: boolean }) => {
+            const hasSale = p.sale_price !== null && p.sale_price < p.price
+            const discount = hasSale ? Math.round(((p.price - p.sale_price!) / p.price) * 100) : null
+            return { name: p.name, brand: "Doggy Lobby", desc: p.description || "", price: `₹${p.price}`, sale_price: hasSale ? `₹${p.sale_price}` : null, discount, image: p.image_urls?.[0] || "", tag: "", category: "Products" }
+          }))
         }
       } catch (err) {
         console.error(err)
