@@ -34,7 +34,7 @@ export async function getProductBySlug(slug: string) {
   
   const { data, error } = await supabase
     .from('products')
-    .select('id, name, slug, description, price, sale_price, image_urls, stock, collection')
+    .select('id, name, slug, description, price, sale_price, image_urls, stock, collection, structured_info')
     .eq('slug', slug)
     .eq('is_active', true)
     .returns<Product[]>()
