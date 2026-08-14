@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
-import { motion, AnimatePresence } from "framer-motion"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { Plus, Minus } from "lucide-react"
@@ -94,21 +93,16 @@ export default function FAQ() {
                 </span>
               </button>
               
-              <AnimatePresence>
-                {openIndex === index && (
-                  <motion.div
-                    id={`faq-answer-${index}`}
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.4, ease: [0.2, 0.65, 0.3, 0.9] }}
-                  >
-                    <div className="px-8 pb-8 text-gray-500 leading-relaxed text-lg">
-                      {faq.answer}
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              <div
+                className="grid transition-[grid-template-rows] duration-400 ease-[cubic-bezier(0.2,0.65,0.3,0.9)]"
+                style={{ gridTemplateRows: openIndex === index ? "1fr" : "0fr" }}
+              >
+                <div className="overflow-hidden">
+                  <div id={`faq-answer-${index}`} className="px-8 pb-8 text-gray-500 leading-relaxed text-lg">
+                    {faq.answer}
+                  </div>
+                </div>
+              </div>
             </div>
           ))}
         </div>
