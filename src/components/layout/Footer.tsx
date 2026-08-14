@@ -63,7 +63,7 @@ export default function Footer() {
             <div className="grid grid-cols-4 gap-3">
               {igPosts.map((post, i) => (
                 <a href="https://www.instagram.com/doggylobbypetshop" target="_blank" rel="noopener noreferrer" key={i} className="aspect-square rounded-2xl overflow-hidden group relative">
-                  <img src={post} alt={`Instagram post ${i+1}`} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                  <img src={post} alt={`Instagram post ${i+1}`} loading="lazy" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                   <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                     <InstagramIcon className="text-white" size={24} />
                   </div>

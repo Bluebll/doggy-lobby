@@ -13,6 +13,7 @@ export default function About() {
           <img 
             src="https://images.unsplash.com/photo-1517849845537-4d257902454a?q=80&w=1200&auto=format&fit=crop" 
             alt="Happy dog owner" 
+            loading="lazy"
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black z-10 hidden lg:block"></div>
