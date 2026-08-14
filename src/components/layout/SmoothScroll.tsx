@@ -13,6 +13,9 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger)
 
+    const isMobile = window.matchMedia("(max-width: 768px)").matches
+    if (isMobile) return
+
     const lenis = new Lenis({
       lerp: 0.1,
       duration: 1.2,
@@ -39,6 +42,8 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (lenisInst) {
       lenisInst.scrollTo(0, { immediate: true })
+    } else if (typeof window !== "undefined") {
+      window.scrollTo(0, 0)
     }
   }, [pathname, lenisInst])
 
